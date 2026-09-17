@@ -1,3 +1,59 @@
-BODY
-{
+/* Universal reset for clean sizing across mobile devices */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
+
+body {
+    /* Changes the entire webpage font to Comic Sans, falling back to cursive if unavailable */
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    background-color: #f0f2f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+
+header {
+    background-color: #007acc;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.container {
+    padding: 15px;
+}
+
+/* Mobile responsive card container */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-top: 10px;
+}
+
+h2 {
+    margin-bottom: 10px;
+    color: #007acc;
+}
+
+/* Big, thumb-friendly mobile button target */
+.btn {
+    display: block;
+    width: 100%;
+    background-color: #007acc;
+    color: white;
+    border: none;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+    .btn:active {
+        background-color: #005999;
+    }
