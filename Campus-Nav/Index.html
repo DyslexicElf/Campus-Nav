@@ -23,3 +23,42 @@
 
 </body>
 </html>
+
+<nav>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="basement.html">Basement</a></li>
+        <li><a href="firstFloor.html">First Floor</a></li>
+        <li><a href="secondFloor.html">Second Floor</a></li>
+        <li><a href="thirdFloor.html">Third Floor</a></li>
+    </ul>
+</nav>
+
+<input type="button" value="Go up a floor" onclick="goUp()">
+<script>
+    function goUp() {
+    if (window.location.href == 'basement.html') {
+    window.location.href = 'firstFloor.html';
+    }
+    if (window.location.href == 'firstFloor.html') {
+    window.location.href = 'secondFloor.html';
+    }
+    if (window.location.href == 'secondFloor.html') {
+    window.location.href = 'thirdFloor.html';
+    }
+</script>
+
+<input type="button" value="Go down a floor" onclick="goDown()">
+<script>
+    function goDown() {
+    if (window.location.href == 'thirdFloor.html') {
+    window.location.href = 'secondFloor.html';
+    }
+
+    if (window.location.href == 'secondFloor.html') {
+    window.location.href = 'firstFloor.html';
+    }
+    if (window.location.href == 'firstFloor.html') {
+    window.location.href = 'basement.html';
+    }
+</script>
