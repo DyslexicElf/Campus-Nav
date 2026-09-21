@@ -8,15 +8,17 @@
 body {
     /* Changes the entire webpage font to Comic Sans, falling back to cursive if unavailable */
     font-family: "Comic Sans MS", "Comic Sans", cursive;
-    background-color: #f0f2f5;
-    color: #333;
+    /*Webpage background*/
+    background-color: #009DEA;
+    /*Font above button*/
+    color: #FDB913;
     line-height: 1.6;
 }
 
-
+/*Top Bar Color*/
 header {
-    background-color: #007acc;
-    color: white;
+    background-color: #00244E;
+    color: #FDB913;
     text-align: center;
     padding: 20px;
 }
@@ -27,24 +29,24 @@ header {
 
 /* Mobile responsive card container */
 .card {
-    background: white;
+    background: #00244E;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     margin-top: 10px;
 }
-
+/*Welcome font*/
 h2 {
     margin-bottom: 10px;
-    color: #007acc;
+    color: #FDB913;
 }
 
 /* Big, thumb-friendly mobile button target */
 .btn {
     display: block;
     width: 100%;
-    background-color: #007acc;
-    color: white;
+    background-color: #FDB913;
+    color: darkblue;
     border: none;
     padding: 15px;
     font-size: 16px;
@@ -55,5 +57,5 @@ h2 {
 }
 
     .btn:active {
-        background-color: #005999;
+        background-color: #009DEA;
     }
