@@ -142,10 +142,10 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Index.html" />
+    <Text Include="index.html" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="StyleSheet.css" />
+    <None Include="style.css" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

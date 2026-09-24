@@ -20,12 +20,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Index.html">
+    <Text Include="index.html">
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="StyleSheet.css">
+    <None Include="style.css">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
