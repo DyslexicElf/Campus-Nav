@@ -6,18 +6,16 @@
 }
 
 body {
-    /* Changes the entire webpage font to Comic Sans, falling back to cursive if unavailable */
+    /* Platform font override configuration rules */
     font-family: "Comic Sans MS", "Comic Sans", cursive;
-    /*Webpage background*/
-    background-color: #009DEA;
-    /*Font above button*/
-    color: #FDB913;
+    background-color: #009DEA; /* Custom SNHU light blue background brand */
+    color: #FDB913; /* Custom gold accent text */
     line-height: 1.6;
 }
 
-/*Top Bar Color*/
+/* Top Bar Styling Profile */
 header {
-    background-color: #00244E;
+    background-color: #00244E; /* SNHU signature dark navy blue */
     color: #FDB913;
     text-align: center;
     padding: 20px;
@@ -32,30 +30,235 @@ header {
     background: #00244E;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     margin-top: 10px;
 }
-/*Welcome font*/
-h2 {
+
+/* Subheadings style framework alignment */
+h2, .subtitle-text {
     margin-bottom: 10px;
     color: #FDB913;
 }
 
-/* Big, thumb-friendly mobile button target */
-.btn {
-    display: block;
-    width: 100%;
-    background-color: #FDB913;
-    color: darkblue;
-    border: none;
-    padding: 15px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 8px;
-    margin-top: 20px;
-    cursor: pointer;
+/* ========================================================
+   MANUAL ROOM LOOKUP SEARCH INPUT GROUP STYLING
+   ======================================================== */
+.search-group {
+    display: flex;
+    gap: 8px;
+    margin: 15px 0 5px 0;
 }
 
-    .btn:active {
-        background-color: #009DEA;
+#manual-room-input {
+    flex: 2;
+    padding: 12px;
+    border: 2px solid #FDB913;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #00244E;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+    #manual-room-input:focus {
+        outline: none;
+        box-shadow: 0 0 8px rgba(253, 185, 19, 0.6);
     }
+
+#manual-locate-btn {
+    flex: 1;
+    background-color: #FDB913;
+    color: #00244E;
+    border: none;
+    border-radius: 6px;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+    #manual-locate-btn:active {
+        background-color: #e0a30d;
+    }
+
+/* ========================================================
+   FLOOR NAVIGATION BUTTON MENU SWITCHER
+   ======================================================== */
+.floor-menu {
+    display: flex;
+    gap: 8px;
+    margin: 15px 0;
+}
+
+.floor-btn {
+    flex: 1;
+    padding: 12px 2px;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 6px;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    font-size: 12px;
+    font-weight: bold;
+    color: #00244E;
+    cursor: pointer;
+    text-align: center;
+}
+
+    /* Active buttons turn gold to track location clicks */
+    .floor-btn.active {
+        background-color: #FDB913;
+        color: #00244E;
+    }
+
+/* Core containment rules mapping bounds layout */
+.map-wrapper {
+    position: relative; /* Crucial anchor setting absolute positioning percentages */
+    width: 100%;
+    overflow: hidden;
+    border: 3px solid #FDB913;
+    border-radius: 8px;
+    background: #c6c6c6;
+    margin-top: 15px;
+}
+
+.mobile-map {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* ========================================================
+   "YOU ARE HERE" PULSING BEACON OVERLAY ENGINE
+   ======================================================== */
+#location-pin {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background-color: #ff3b30; /* Bold Red Indicator Target */
+    border: 3px solid white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%); /* Centers the marker point directly on coordinates */
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 10;
+    display: none; /* Controlled dynamically by JavaScript lookup routing */
+}
+
+    #location-pin::after {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        width: 18px;
+        height: 18px;
+        border: 3px solid #ff3b30;
+        border-radius: 50%;
+        animation: beaconPulse 1.8s infinite ease-out;
+    }
+
+@keyframes beaconPulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}
+
+/* ========================================================
+   HIGH-VISIBILITY DISTANCE SIGN SYSTEM (PURE NUMBERS)
+   ======================================================== */
+#admin-qr-dashboard {
+    margin-top: 50px;
+    padding: 30px;
+    background: #fff;
+    color: #333;
+    border-top: 4px dashed #00244E;
+}
+
+#qr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 35px;
+    margin-top: 20px;
+}
+
+.qr-card {
+    border: 4px solid #000;
+    padding: 25px 15px 15px 15px;
+    text-align: center;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+/* Massive isolated room code designed to stand out down hallways */
+.distance-title {
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 0.9;
+    color: #00244E;
+    margin-bottom: 10px;
+    letter-spacing: -2px;
+}
+
+/* Scaled footprint for the scanning barcode barcode */
+.qr-card img {
+    width: 180px;
+    height: 180px;
+    margin: 10px auto;
+    display: block;
+}
+
+/* Small, clean description tag anchored safely at the base */
+.distance-subtitle {
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #fff;
+    background-color: #00244E; /* Dark framing block at the base */
+    padding: 8px;
+    border-radius: 4px;
+    margin-top: 15px;
+    text-transform: uppercase;
+}
+
+/* ========================================================
+   PRINT ENGINE OPTIMIZATION RULE SETS
+   ======================================================== */
+@media print {
+    /* Hide the interactive mobile app ui entirely from physical paper prints */
+    body * {
+        visibility: hidden;
+    }
+    /* Enforce absolute tracking overrides showing only the barcode placard grids */
+    #admin-qr-dashboard, #admin-qr-dashboard * {
+        visibility: visible;
+    }
+
+    #admin-qr-dashboard {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        border: none;
+    }
+}
+
+
+/* ========================================================
+   PATHFINDING LINE GRAPHICS OVERLAY
+   ======================================================== */
+#path-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allows users to click through the lines to interact with the map */
+    z-index: 5; /* Keeps the lines above the map but below the location pin */
+}
