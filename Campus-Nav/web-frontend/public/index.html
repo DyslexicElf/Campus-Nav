@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campus Navigation App</title>
     <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 </head>
 <body>
 
@@ -17,10 +18,13 @@
             <h2>Building Directory</h2>
             <p class="subtitle-text">Select a floor, scan a room QR code, or type a room ID below:</p>
 
-            <div class="search-group">
-                <input type="text" id="manual-room-input" placeholder="e.g., 108, 317, 014" autocomplete="off">
-                <button id="manual-locate-btn">Locate</button>
-            </div>
+           <div class="search-group">
+    <input type="text" id="manual-room-input" placeholder="e.g., 108, 317, 014" autocomplete="off">
+    <button id="manual-locate-btn">Locate</button>
+    <button id="scan-qr-btn">Scan QR</button>
+</div>
+<!-- This is where the camera video feed will show up -->
+<div id="reader" style="width: 100%; max-width: 400px; margin: 10px auto; display: none;"></div>
             <p id="search-error-msg" style="display: none; color: #ff3b30; font-size: 13px; margin-top: 5px; font-weight: bold;"></p>
 
             <nav class="floor-menu">
@@ -52,6 +56,9 @@
                         // 1. WAYPOINT GRAPH & ROOM DATABASE
                         // ==========================================
 
+                        let currentActivePath = [];
+                        let activeTargetRoom = null;
+                        let currentStartNode = "n1"; // Default starting point (Main Lobby)
                         let waypoints = {};
                         let roomDatabase = {};
 
@@ -64,10 +71,11 @@
                         const qrGrid = document.getElementById('qr-grid');
                         const roomInput = document.getElementById('manual-room-input');
                         const locateBtn = document.getElementById('manual-locate-btn');
+                        const scanBtn = document.getElementById('scan-qr-btn');
+                        const readerDiv = document.getElementById('reader');
                         const errorMsg = document.getElementById('search-error-msg');
 
-                        let currentActivePath = [];
-                        let activeTargetRoom = null;
+                        
 
                         // ==========================================
                         // 2. PATHFINDING ENGINE (DIJKSTRA)
@@ -165,7 +173,7 @@
 
         if (targetRoom.entryNode) {
             // NEW: Ask the Node.js backend to run the C++ executable!
-            fetch(`/api/navigate?start=n1&end=${targetRoom.entryNode}`)
+            fetch(`/api/navigate?start=${currentStartNode}&end=${targetRoom.entryNode}`)
                 .then(response => {
                     if (!response.ok) throw new Error("Backend engine failed");
                     return response.json();
@@ -198,8 +206,49 @@
                         roomInput.addEventListener('keypress', (e) => {
                             if (e.key === 'Enter') executeManualSearch();
                         });
+scanBtn.addEventListener('click', () => {
+    // Show the camera box
+    readerDiv.style.display = 'block';
+    
+    const html5QrCode = new Html5Qrcode("reader");
+    
+    const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+        try {
+            // The QR code holds a URL like: http://localhost:3000/?room=108
+            const url = new URL(decodedText);
+            const scannedRoom = url.searchParams.get("room");
+            
+            if (scannedRoom && roomDatabase[scannedRoom]) {
+                const startRoomData = roomDatabase[scannedRoom];
+                if (startRoomData.entryNode) {
+                    currentStartNode = startRoomData.entryNode;
+                    roomInput.placeholder = `You are at ${scannedRoom}. Where to?`;
+                    setActiveFloor(startRoomData.floor);
+                }
+            }
+        } catch (e) {
+            console.error("Invalid QR Code scanned.");
+            errorMsg.textContent = "Unrecognized QR format.";
+            errorMsg.style.display = 'block';
+        }
 
-                        window.addEventListener('DOMContentLoaded', () => {
+        // Shut off the camera and hide the video feed once successful
+        html5QrCode.stop().then(() => {
+            readerDiv.style.display = 'none';
+        });
+    };
+
+    // Start the rear-facing camera
+    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+    html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+        .catch(err => {
+            console.error("Camera access denied or unavailable", err);
+            errorMsg.textContent = "Camera access denied. Please check device permissions.";
+            errorMsg.style.display = 'block';
+            readerDiv.style.display = 'none';
+        });
+});
+                       window.addEventListener('DOMContentLoaded', () => {
     // Fetch the shared JSON file directly from your public folder
     fetch('/map_data.json')
         .then(response => {
@@ -216,6 +265,23 @@
             // Boot up the 1st Floor map ONLY after the data is fully loaded
             renderPath('2');
             generateQRDashboard();
+
+            // NEW: QR Code Scanner Logic - "You are here"
+            const urlParams = new URLSearchParams(window.location.search);
+            const scannedRoom = urlParams.get('room');
+            
+            if (scannedRoom && roomDatabase[scannedRoom]) {
+                const startRoomData = roomDatabase[scannedRoom];
+                
+                if (startRoomData.entryNode) {
+                    // Set their physical starting location
+                    currentStartNode = startRoomData.entryNode;
+                    
+                    // Update the UI to show them where they are
+                    roomInput.placeholder = `You are at ${scannedRoom}. Where to?`;
+                    setActiveFloor(startRoomData.floor);
+                }
+            }
         })
         .catch(error => {
             console.error("Error loading map data:", error);

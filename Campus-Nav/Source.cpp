@@ -54,13 +54,19 @@ vector<string> calculateShortestPath(string startNode, string endNode, const jso
 
         // 3. Check all connected neighbors
         for (string neighbor : mapData["waypoints"][current]["neighbors"]) {
-            // Use X and Y coordinates to calculate the physical line distance (weight)
+
+            // X and Y coordinates for 2D physical distance
             double x1 = mapData["waypoints"][current]["x"];
             double y1 = mapData["waypoints"][current]["y"];
             double x2 = mapData["waypoints"][neighbor]["x"];
             double y2 = mapData["waypoints"][neighbor]["y"];
 
-            double weight = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+            // NEW: Floor coordinates to account for 3D elevator/stair travel
+            int floor1 = mapData["waypoints"][current]["floor"];
+            int floor2 = mapData["waypoints"][neighbor]["floor"];
+            double floorPenalty = (floor1 != floor2) ? 50.0 : 0.0; // Adds weight to floor changes
+
+            double weight = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2)) + floorPenalty;
             double altDistance = currentDist + weight;
 
             // If this is a faster route to the neighbor, save it
@@ -97,17 +103,27 @@ int main(int argc, char* argv[]) {
     string startNode = argv[1];
     string endNode = argv[2];
 
-    // TODO: Read the JSON database
-    // ifstream file("../Web-Frontend/public/map_data.json");
+    // TODO: Read the JSON database 
+    // (Note: Path is relative to the Node.js execution directory)
+    // ifstream file("public/map_data.json");
     // json mapData = json::parse(file);
 
     // TODO: Calculate the route
     // vector<string> shortestPath = calculateShortestPath(startNode, endNode, mapData);
 
-    // TODO: Print the path vector as a formatted JSON array string
-    // Example format expected by Node.js: ["n1", "n3", "n5"]
-
+    // TEMPORARY MOCK OUTPUT (Delete this when json parser is working)
     cout << "[\"n1\", \"n3\"]" << endl;
+
+    /*
+    // TODO: REAL JSON OUTPUT FORMATTER (Uncomment this when json parser is working)
+    // This perfectly formats the C++ vector into the strict JSON array Express expects
+    cout << "[";
+    for (size_t i = 0; i < shortestPath.size(); ++i) {
+        cout << "\"" << shortestPath[i] << "\"";
+        if (i < shortestPath.size() - 1) cout << ", ";
+    }
+    cout << "]" << endl;
+    */
 
     return 0;
 }
