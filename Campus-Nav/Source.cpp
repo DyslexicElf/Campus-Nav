@@ -14,6 +14,8 @@
 
 
 using namespace std;
+#include <nlohmann/json.hpp> 
+using json = nlohmann::json;
 
 // Helper structure to keep the queue organized by shortest distance
 struct NodeRecord {
@@ -101,27 +103,23 @@ int main(int argc, char* argv[]) {
     string startNode = argv[1];
     string endNode = argv[2];
 
-    // TODO: Read the JSON database 
-    // (Note: Path is relative to the Node.js execution directory)
-    // ifstream file("public/map_data.json");
-    // json mapData = json::parse(file);
+    //Read the JSON database 
+    
+    ifstream file("public/map_data.json");
+    json mapData = json::parse(file);
 
-    // TODO: Calculate the route
-    // vector<string> shortestPath = calculateShortestPath(startNode, endNode, mapData);
-
-    // TEMPORARY MOCK OUTPUT (Delete this when json parser is working)
-    cout << "[\"n1\", \"n3\"]" << endl;
-
-    /*
-    // TODO: REAL JSON OUTPUT FORMATTER (Uncomment this when json parser is working)
-    // This perfectly formats the C++ vector into the strict JSON array Express expects
+    //Calculate the route
+    vector<string> shortestPath = calculateShortestPath(startNode, endNode, mapData);
+   
+    //REAL JSON OUTPUT FORMATTER
+    //This perfectly formats the C++ vector into the strict JSON array Express expects
     cout << "[";
     for (size_t i = 0; i < shortestPath.size(); ++i) {
         cout << "\"" << shortestPath[i] << "\"";
         if (i < shortestPath.size() - 1) cout << ", ";
     }
     cout << "]" << endl;
-    */
+    
 
     return 0;
 }
