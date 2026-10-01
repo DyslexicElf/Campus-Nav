@@ -11,9 +11,7 @@
 #include <limits>
 #include <algorithm>
 
-// TODO: Install nlohmann/json via NuGet or vcpkg to read map_data.json
-// #include <nlohmann/json.hpp> 
-// using json = nlohmann::json;
+
 
 using namespace std;
 
