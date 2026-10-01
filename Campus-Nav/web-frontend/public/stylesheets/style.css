@@ -66,7 +66,7 @@ h2, .subtitle-text {
         box-shadow: 0 0 8px rgba(253, 185, 19, 0.6);
     }
 
-#manual-locate-btn {
+#manual-locate-btn, #scan-qr-btn {
     flex: 1;
     background-color: #FDB913;
     color: #00244E;
