@@ -19,14 +19,4 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="index.html">
-      <Filter>Source Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="style.css">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
 </Project>
