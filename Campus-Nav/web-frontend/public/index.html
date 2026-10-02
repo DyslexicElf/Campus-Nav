@@ -18,14 +18,27 @@
             <h2>Building Directory</h2>
             <p class="subtitle-text">Select a floor, scan a room QR code, or type a room ID below:</p>
 
-           <div class="search-group">
-    <input type="text" id="manual-room-input" placeholder="e.g., 108, 317, 014" autocomplete="off">
-    <button id="manual-locate-btn">Locate</button>
-    <button id="scan-qr-btn">Scan QR</button>
-</div>
-<!-- This is where the camera video feed will show up -->
-<div id="reader" style="width: 100%; max-width: 400px; margin: 10px auto; display: none;"></div>
+            <div class="search-group">
+                <input type="text" id="manual-room-input" placeholder="e.g., 108, 317, 014" autocomplete="off">
+                <button id="manual-locate-btn">Locate</button>
+                <button id="scan-qr-btn">Scan QR</button>
+            </div>
+            
+            <!-- NEW: Accessibility Toggle -->
+            <div class="options-group" style="margin-top: 10px;">
+                <input type="checkbox" id="accessible-toggle">
+                <label for="accessible-toggle">Require Elevator / Accessible Route</label>
+            </div>
+
+            <!-- This is where the camera video feed will show up -->
+            <div id="reader" style="width: 100%; max-width: 400px; margin: 10px auto; display: none;"></div>
             <p id="search-error-msg" style="display: none; color: #ff3b30; font-size: 13px; margin-top: 5px; font-weight: bold;"></p>
+
+            <!-- NEW: Turn-by-Turn Directions Panel -->
+            <div id="directions-panel" style="display: none;">
+                <h3>Navigation Steps</h3>
+                <ul id="directions-list"></ul>
+            </div>
 
             <nav class="floor-menu">
                 <button class="floor-btn" data-map="images/floor1.png">Basement</button>
@@ -50,281 +63,297 @@
     </section>
 
     <script>
-                        const baseUrl = window.location.origin;
+        const baseUrl = window.location.origin;
 
-                        // ==========================================
-                        // 1. WAYPOINT GRAPH & ROOM DATABASE
-                        // ==========================================
+        // ==========================================
+        // 1. WAYPOINT GRAPH & ROOM DATABASE
+        // ==========================================
 
-                        let currentActivePath = [];
-                        let activeTargetRoom = null;
-                        let currentStartNode = "n1"; // Default starting point (Main Lobby)
-                        let waypoints = {};
-                        let roomDatabase = {};
+        let currentActivePath = [];
+        let activeTargetRoom = null;
+        let currentStartNode = "n1"; // Default starting point (Main Lobby)
+        let waypoints = {};
+        let roomDatabase = {};
 
-                        const buttons = document.querySelectorAll('.floor-btn');
-                        // ... (the rest of your DOM variables stay the same)
+        const buttons = document.querySelectorAll('.floor-btn');
+        const mapImage = document.getElementById('current-floor-map');
+        const pin = document.getElementById('location-pin');
+        const svgOverlay = document.getElementById('path-overlay');
+        const qrGrid = document.getElementById('qr-grid');
+        const roomInput = document.getElementById('manual-room-input');
+        const locateBtn = document.getElementById('manual-locate-btn');
+        const scanBtn = document.getElementById('scan-qr-btn');
+        const readerDiv = document.getElementById('reader');
+        const errorMsg = document.getElementById('search-error-msg');
 
-                        const mapImage = document.getElementById('current-floor-map');
-                        const pin = document.getElementById('location-pin');
-                        const svgOverlay = document.getElementById('path-overlay');
-                        const qrGrid = document.getElementById('qr-grid');
-                        const roomInput = document.getElementById('manual-room-input');
-                        const locateBtn = document.getElementById('manual-locate-btn');
-                        const scanBtn = document.getElementById('scan-qr-btn');
-                        const readerDiv = document.getElementById('reader');
-                        const errorMsg = document.getElementById('search-error-msg');
-
-                        
-
-                        // ==========================================
-                        // 2. PATHFINDING ENGINE (DIJKSTRA)
-                        // ==========================================
-                        
-
-                        function renderPath(floorNumber) {
-                            svgOverlay.innerHTML = '';
-
-                            // Debug Mode: Draws all nodes & edges
-                            for (const [id, data] of Object.entries(waypoints)) {
-                                if (data.floor == floorNumber) {
-                                    data.neighbors.forEach(nId => {
-                                        const nData = waypoints[nId];
-                                        if (nData.floor == floorNumber) {
-                                            svgOverlay.innerHTML += `<line x1="${data.x}%" y1="${data.y}%" x2="${nData.x}%" y2="${nData.y}%" stroke="rgba(0,36,78,0.3)" stroke-width="2"/>`;
-                                        }
-                                    });
-                                    svgOverlay.innerHTML += `<circle cx="${data.x}%" cy="${data.y}%" r="4" fill="#00244E" />`;
-                                    svgOverlay.innerHTML += `<text x="${data.x}%" y="${data.y}%" fill="#00244E" font-size="12" font-family="sans-serif" dy="-8" dx="-6" font-weight="bold">${id}</text>`;
-                                }
-                            }
-
-                            // Draw the actual calculated routing path down the hallway
-                            if (currentActivePath.length > 1) {
-                                for (let i = 0; i < currentActivePath.length - 1; i++) {
-                                    const n1 = waypoints[currentActivePath[i]];
-                                    const n2 = waypoints[currentActivePath[i + 1]];
-
-                                    if (n1.floor == floorNumber && n2.floor == floorNumber) {
-                                        svgOverlay.innerHTML += `<line x1="${n1.x}%" y1="${n1.y}%" x2="${n2.x}%" y2="${n2.y}%" stroke="#FDB913" stroke-width="6" stroke-dasharray="8,8" />`;
-                                    }
-                                }
-                            }
-
-                            // Draw the final segment directly into the target room
-                            if (currentActivePath.length > 0 && activeTargetRoom && activeTargetRoom.floor == floorNumber) {
-                                const finalNodeId = currentActivePath[currentActivePath.length - 1];
-                                const finalNode = waypoints[finalNodeId];
-
-                                if (finalNode.floor == floorNumber) {
-                                    svgOverlay.innerHTML += `<line x1="${finalNode.x}%" y1="${finalNode.y}%" x2="${activeTargetRoom.x}%" y2="${activeTargetRoom.y}%" stroke="#FDB913" stroke-width="6" stroke-dasharray="8,8" />`;
-                                }
-                            }
-                        }
-
-                        // ==========================================
-                        // 3. UI NAVIGATION & SEARCH
-                        // ==========================================
-                        function setActiveFloor(floorNumber) {
-                            buttons.forEach(button => {
-                                const targetIndex = button.getAttribute('data-map').replace('images/floor', '').replace('.png', '');
-                                if (targetIndex === floorNumber.toString()) {
-                                    buttons.forEach(btn => btn.classList.remove('active'));
-                                    button.classList.add('active');
-                                    mapImage.setAttribute('src', button.getAttribute('data-map'));
-                                    renderPath(floorNumber);
-                                }
-                            });
-                        }
-
-                        buttons.forEach(button => {
-                            button.addEventListener('click', function () {
-                                const floorIndex = this.getAttribute('data-map').replace('images/floor', '').replace('.png', '');
-                                setActiveFloor(floorIndex);
-
-                                if (pin.dataset.targetFloor !== floorIndex) {
-                                    pin.style.display = 'none';
-                                } else {
-                                    pin.style.display = 'block';
-                                }
-                            });
-                        });
-
-                        function executeManualSearch() {
-    const queryRoom = roomInput.value.trim().toUpperCase();
-    errorMsg.style.display = 'none';
-    currentActivePath = []; 
-    activeTargetRoom = null; 
-    
-    if (!queryRoom) {
-        errorMsg.textContent = "Please enter a room number.";
-        errorMsg.style.display = 'block';
-        return;
-    }
-    
-    if (roomDatabase[queryRoom]) {
-        const targetRoom = roomDatabase[queryRoom];
-        activeTargetRoom = targetRoom; 
+        // ==========================================
+        // 2. PATHFINDING ENGINE (DIJKSTRA)
+        // ==========================================
         
-        pin.dataset.targetFloor = targetRoom.floor;
-        pin.style.left = targetRoom.x + '%';
-        pin.style.top = targetRoom.y + '%';
-        pin.style.display = 'block';
+        function renderPath(floorNumber) {
+            svgOverlay.innerHTML = '';
 
-        if (targetRoom.entryNode) {
-            // NEW: Ask the Node.js backend to run the C++ executable!
-            fetch(`/api/navigate?start=${currentStartNode}&end=${targetRoom.entryNode}`)
-                .then(response => {
-                    if (!response.ok) throw new Error("Backend engine failed");
-                    return response.json();
-                })
-                .then(pathArray => {
-                    // Save the route returned by C++ and draw the map
-                    currentActivePath = pathArray;
+            // Debug Mode: Draws all nodes & edges
+            for (const [id, data] of Object.entries(waypoints)) {
+                if (data.floor == floorNumber) {
+                    data.neighbors.forEach(nId => {
+                        const nData = waypoints[nId];
+                        if (nData.floor == floorNumber) {
+                            svgOverlay.innerHTML += `<line x1="${data.x}%" y1="${data.y}%" x2="${nData.x}%" y2="${nData.y}%" stroke="rgba(0,36,78,0.3)" stroke-width="2"/>`;
+                        }
+                    });
+                    svgOverlay.innerHTML += `<circle cx="${data.x}%" cy="${data.y}%" r="4" fill="#00244E" />`;
+                    svgOverlay.innerHTML += `<text x="${data.x}%" y="${data.y}%" fill="#00244E" font-size="12" font-family="sans-serif" dy="-8" dx="-6" font-weight="bold">${id}</text>`;
+                }
+            }
+
+            // Draw the actual calculated routing path down the hallway
+            if (currentActivePath.length > 1) {
+                for (let i = 0; i < currentActivePath.length - 1; i++) {
+                    const n1 = waypoints[currentActivePath[i]];
+                    const n2 = waypoints[currentActivePath[i + 1]];
+
+                    if (n1.floor == floorNumber && n2.floor == floorNumber) {
+                        svgOverlay.innerHTML += `<line x1="${n1.x}%" y1="${n1.y}%" x2="${n2.x}%" y2="${n2.y}%" stroke="#FDB913" stroke-width="6" stroke-dasharray="8,8" />`;
+                    }
+                }
+            }
+
+            // Draw the final segment directly into the target room
+            if (currentActivePath.length > 0 && activeTargetRoom && activeTargetRoom.floor == floorNumber) {
+                const finalNodeId = currentActivePath[currentActivePath.length - 1];
+                const finalNode = waypoints[finalNodeId];
+
+                if (finalNode.floor == floorNumber) {
+                    svgOverlay.innerHTML += `<line x1="${finalNode.x}%" y1="${finalNode.y}%" x2="${activeTargetRoom.x}%" y2="${activeTargetRoom.y}%" stroke="#FDB913" stroke-width="6" stroke-dasharray="8,8" />`;
+                }
+            }
+        }
+
+        // ==========================================
+        // 3. UI NAVIGATION & SEARCH
+        // ==========================================
+        function setActiveFloor(floorNumber) {
+            buttons.forEach(button => {
+                const targetIndex = button.getAttribute('data-map').replace('images/floor', '').replace('.png', '');
+                if (targetIndex === floorNumber.toString()) {
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    mapImage.setAttribute('src', button.getAttribute('data-map'));
+                    renderPath(floorNumber);
+                }
+            });
+        }
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function () {
+                const floorIndex = this.getAttribute('data-map').replace('images/floor', '').replace('.png', '');
+                setActiveFloor(floorIndex);
+
+                if (pin.dataset.targetFloor !== floorIndex) {
+                    pin.style.display = 'none';
+                } else {
+                    pin.style.display = 'block';
+                }
+            });
+        });
+
+        function executeManualSearch() {
+            const queryRoom = roomInput.value.trim().toUpperCase();
+            errorMsg.style.display = 'none';
+            document.getElementById('directions-panel').style.display = 'none'; // Hide directions on new search
+            currentActivePath = []; 
+            activeTargetRoom = null; 
+            
+            if (!queryRoom) {
+                errorMsg.textContent = "Please enter a room number.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
+            if (roomDatabase[queryRoom]) {
+                const targetRoom = roomDatabase[queryRoom];
+                activeTargetRoom = targetRoom; 
+                
+                pin.dataset.targetFloor = targetRoom.floor;
+                pin.style.left = targetRoom.x + '%';
+                pin.style.top = targetRoom.y + '%';
+                pin.style.display = 'block';
+
+                if (targetRoom.entryNode) {
+                    // Grab the accessibility checkbox state
+                    const isAccessible = document.getElementById('accessible-toggle').checked;
+
+                    // Ask the Node.js backend to run the C++ executable with the accessible flag!
+                    fetch(`/api/navigate?start=${currentStartNode}&end=${targetRoom.entryNode}&accessible=${isAccessible}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error("Backend engine failed");
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Save the route returned by C++ and draw the map
+                            currentActivePath = data.path;
+                            setActiveFloor(targetRoom.floor);
+                            roomInput.blur();
+
+                            // Populate the new Text Directions UI
+                            const directionsPanel = document.getElementById('directions-panel');
+                            const directionsList = document.getElementById('directions-list');
+                            directionsList.innerHTML = ''; // Clear old directions
+                            
+                            if (data.directions && data.directions.length > 0) {
+                                data.directions.forEach(step => {
+                                    directionsList.innerHTML += `<li>${step}</li>`;
+                                });
+                                directionsPanel.style.display = 'block';
+                            } else {
+                                directionsPanel.style.display = 'none';
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Routing Error:", err);
+                            errorMsg.textContent = "Could not calculate route.";
+                            errorMsg.style.display = 'block';
+                            setActiveFloor(targetRoom.floor);
+                        });
+                } else {
                     setActiveFloor(targetRoom.floor);
                     roomInput.blur();
-                })
-                .catch(err => {
-                    console.error("Routing Error:", err);
-                    errorMsg.textContent = "Could not calculate route.";
-                    errorMsg.style.display = 'block';
-                    setActiveFloor(targetRoom.floor);
-                });
-        } else {
-            setActiveFloor(targetRoom.floor);
-            roomInput.blur();
-        }
-    } else {
-        errorMsg.textContent = `Room "${queryRoom}" not found in database.`;
-        errorMsg.style.display = 'block';
-        pin.style.display = 'none';
-        renderPath(document.querySelector('.floor-btn.active').getAttribute('data-map').replace('floor', '').replace('.png', ''));
-    }
-}
-
-                        locateBtn.addEventListener('click', executeManualSearch);
-                        roomInput.addEventListener('keypress', (e) => {
-                            if (e.key === 'Enter') executeManualSearch();
-                        });
-scanBtn.addEventListener('click', () => {
-    // Show the camera box
-    readerDiv.style.display = 'block';
-    
-    const html5QrCode = new Html5Qrcode("reader");
-    
-    const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-        try {
-            // The QR code holds a URL like: http://localhost:3000/?room=108
-            const url = new URL(decodedText);
-            const scannedRoom = url.searchParams.get("room");
-            
-            if (scannedRoom && roomDatabase[scannedRoom]) {
-                const startRoomData = roomDatabase[scannedRoom];
-                if (startRoomData.entryNode) {
-                    currentStartNode = startRoomData.entryNode;
-                    roomInput.placeholder = `You are at ${scannedRoom}. Where to?`;
-                    setActiveFloor(startRoomData.floor);
                 }
+            } else {
+                errorMsg.textContent = `Room "${queryRoom}" not found in database.`;
+                errorMsg.style.display = 'block';
+                pin.style.display = 'none';
+                renderPath(document.querySelector('.floor-btn.active').getAttribute('data-map').replace('floor', '').replace('.png', ''));
             }
-        } catch (e) {
-            console.error("Invalid QR Code scanned.");
-            errorMsg.textContent = "Unrecognized QR format.";
-            errorMsg.style.display = 'block';
         }
 
-        // Shut off the camera and hide the video feed once successful
-        html5QrCode.stop().then(() => {
-            readerDiv.style.display = 'none';
+        locateBtn.addEventListener('click', executeManualSearch);
+        roomInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') executeManualSearch();
         });
-    };
 
-    // Start the rear-facing camera
-    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-    html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
-        .catch(err => {
-            console.error("Camera access denied or unavailable", err);
-            errorMsg.textContent = "Camera access denied. Please check device permissions.";
-            errorMsg.style.display = 'block';
-            readerDiv.style.display = 'none';
-        });
-});
-                       window.addEventListener('DOMContentLoaded', () => {
-    // Fetch the shared JSON file directly from your public folder
-    fetch('/map_data.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Could not load map_data.json");
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Populate your variables with the live data
-            waypoints = data.waypoints;
-            roomDatabase = data.rooms;
+        scanBtn.addEventListener('click', () => {
+            // Show the camera box
+            readerDiv.style.display = 'block';
             
-            // Boot up the 1st Floor map ONLY after the data is fully loaded
-            renderPath('2');
-            generateQRDashboard();
-
-            // NEW: QR Code Scanner Logic - "You are here"
-            const urlParams = new URLSearchParams(window.location.search);
-            const scannedRoom = urlParams.get('room');
+            const html5QrCode = new Html5Qrcode("reader");
             
-            if (scannedRoom && roomDatabase[scannedRoom]) {
-                const startRoomData = roomDatabase[scannedRoom];
-                
-                if (startRoomData.entryNode) {
-                    // Set their physical starting location
-                    currentStartNode = startRoomData.entryNode;
+            const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                try {
+                    // The QR code holds a URL like: http://localhost:3000/?room=108
+                    const url = new URL(decodedText);
+                    const scannedRoom = url.searchParams.get("room");
                     
-                    // Update the UI to show them where they are
-                    roomInput.placeholder = `You are at ${scannedRoom}. Where to?`;
-                    setActiveFloor(startRoomData.floor);
+                    if (scannedRoom && roomDatabase[scannedRoom]) {
+                        const startRoomData = roomDatabase[scannedRoom];
+                        if (startRoomData.entryNode) {
+                            currentStartNode = startRoomData.entryNode;
+                            roomInput.placeholder = `You are at ${scannedRoom}. Where to?`;
+                            setActiveFloor(startRoomData.floor);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Invalid QR Code scanned.");
+                    errorMsg.textContent = "Unrecognized QR format.";
+                    errorMsg.style.display = 'block';
                 }
-            }
-        })
-        .catch(error => {
-            console.error("Error loading map data:", error);
-            errorMsg.textContent = "System error: Failed to load map coordinates.";
-            errorMsg.style.display = 'block';
+
+                // Shut off the camera and hide the video feed once successful
+                html5QrCode.stop().then(() => {
+                    readerDiv.style.display = 'none';
+                });
+            };
+
+            // Start the rear-facing camera
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+                .catch(err => {
+                    console.error("Camera access denied or unavailable", err);
+                    errorMsg.textContent = "Camera access denied. Please check device permissions.";
+                    errorMsg.style.display = 'block';
+                    readerDiv.style.display = 'none';
+                });
         });
-});
-   // DEBUG TOOL: Click anywhere on the map to get its exact X/Y percentages
-document.querySelector('.map-wrapper').addEventListener('click', function(e) {
-    const rect = this.getBoundingClientRect();
-    const clickX = Math.round(((e.clientX - rect.left) / rect.width) * 100);
-    const clickY = Math.round(((e.clientY - rect.top) / rect.height) * 100);
-    
-    // Pops up an alert with the exact format needed for your JSON file
-    alert(`"n_NEW": { "floor": [floor], "x": ${clickX}, "y": ${clickY}, "neighbors": [] }`);
-});
 
-function generateQRDashboard() {
-    qrGrid.innerHTML = ''; // Clear the grid
+        window.addEventListener('DOMContentLoaded', () => {
+            // Fetch the shared JSON file directly from your public folder
+            fetch('/map_data.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Could not load map_data.json");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Populate your variables with the live data
+                    waypoints = data.waypoints;
+                    roomDatabase = data.rooms;
+                    
+                    // Boot up the 1st Floor map ONLY after the data is fully loaded
+                    renderPath('2');
+                    generateQRDashboard();
 
-    for (const [roomId, roomInfo] of Object.entries(roomDatabase)) {
-        // Creates a URL that points directly to this specific room in your app
-        const roomUrl = `${baseUrl}/?room=${roomId}`; 
-        
-        // Generates the QR code image using a free API
-        const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(roomUrl)}`;
-        
-        // Injects the QR sticker into your HTML grid
-        qrGrid.innerHTML += `
-            <div style="text-align: center; border: 1px solid #ccc; padding: 10px; border-radius: 8px; width: 170px;">
-                <img src="${qrImageUrl}" alt="QR for ${roomId}" style="width: 150px; height: 150px;">
-                <h3 style="margin: 10px 0 5px 0; font-size: 14px;">${roomInfo.label}</h3>
-                <p style="margin: 0; font-size: 12px; color: #666;">Room ${roomId}</p>
-            </div>
-        `;
-    }
-    
-    // Add some quick grid styling so they print nicely
-    qrGrid.style.display = "flex";
-    qrGrid.style.flexWrap = "wrap";
-    qrGrid.style.gap = "20px";
-    qrGrid.style.marginTop = "20px";
-}
+                    // NEW: QR Code Scanner Logic - "You are here"
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const scannedRoom = urlParams.get('room');
+                    
+                    if (scannedRoom && roomDatabase[scannedRoom]) {
+                        const startRoomData = roomDatabase[scannedRoom];
+                        
+                        if (startRoomData.entryNode) {
+                            // Set their physical starting location
+                            currentStartNode = startRoomData.entryNode;
+                            
+                            // Update the UI to show them where they are
+                            roomInput.placeholder = `You are at ${scannedRoom}. Where to?`;
+                            setActiveFloor(startRoomData.floor);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error("Error loading map data:", error);
+                    errorMsg.textContent = "System error: Failed to load map coordinates.";
+                    errorMsg.style.display = 'block';
+                });
+        });
+
+        // DEBUG TOOL: Click anywhere on the map to get its exact X/Y percentages
+        document.querySelector('.map-wrapper').addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const clickX = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+            const clickY = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+            
+            // Pops up an alert with the exact format needed for your JSON file
+            alert(`"n_NEW": { "floor": [floor], "x": ${clickX}, "y": ${clickY}, "neighbors": [] }`);
+        });
+
+        function generateQRDashboard() {
+            qrGrid.innerHTML = ''; // Clear the grid
+
+            for (const [roomId, roomInfo] of Object.entries(roomDatabase)) {
+                // Creates a URL that points directly to this specific room in your app
+                const roomUrl = `${baseUrl}/?room=${roomId}`; 
+                
+                // Generates the QR code image using a free API
+                const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(roomUrl)}`;
+                
+                // Injects the QR sticker into your HTML grid
+                qrGrid.innerHTML += `
+                    <div style="text-align: center; border: 1px solid #ccc; padding: 10px; border-radius: 8px; width: 170px;">
+                        <img src="${qrImageUrl}" alt="QR for ${roomId}" style="width: 150px; height: 150px;">
+                        <h3 style="margin: 10px 0 5px 0; font-size: 14px;">${roomInfo.label}</h3>
+                        <p style="margin: 0; font-size: 12px; color: #666;">Room ${roomId}</p>
+                    </div>
+                `;
+            }
+            
+            // Add some quick grid styling so they print nicely
+            qrGrid.style.display = "flex";
+            qrGrid.style.flexWrap = "wrap";
+            qrGrid.style.gap = "20px";
+            qrGrid.style.marginTop = "20px";
+        }
     </script>
     
 </body>

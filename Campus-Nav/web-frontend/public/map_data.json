@@ -1,9 +1,11 @@
 {
   "waypoints": {
+    "_note1": "First Floor waypoints (floor 2)",
+
     "n1": { "floor": 2, "x": 48, "y": 54, "neighbors": ["n2", "n3", "n13"] },
     "n2": { "floor": 2, "x": 63, "y": 50, "neighbors": ["n1", "n4", "n8"] },
     "n3": { "floor": 2, "x": 30, "y": 59, "neighbors": ["n1", "n7", "n14"] },
-    "n4": { "floor": 2, "x": 65, "y": 64, "neighbors": ["n2", "n11"] },
+    "n4": { "floor": 2, "x": 65, "y": 64, "neighbors": ["n2", "n11"], "isElevator": true },
     "n5": { "floor": 2, "x": 20, "y": 38, "neighbors": ["n7", "n6"] },
     "n6": { "floor": 2, "x": 12, "y": 37, "neighbors": ["n5"] },
     "n7": { "floor": 2, "x": 29, "y": 38, "neighbors": ["n3", "n5"] },
@@ -15,7 +17,7 @@
     "n13": { "floor": 2, "x": 48, "y": 62, "neighbors": ["n1", "n14"] },
     "n14": { "floor": 2, "x": 36, "y": 64, "neighbors": ["n3", "n13"] },
 
-    "_note1": "Basement waypoints (floor 1) (n20 - n25)",
+    "_note2": "Basement waypoints (floor 1)",
 
 
 
@@ -23,20 +25,12 @@
 
 
 
-    "_note2": "Second Floor waypoints (floor 1) (n30+)",
+    "_note3": "Second Floor waypoints (floor 3)",
 
 
 
 
-    "_note3": "Second Floor waypoints (floor 1) (n30+)",
-
-
-
-
-
-
-
-
+  
 
 
 
@@ -58,7 +52,15 @@
 
 
 
-    "_note4": "Third Floor waypoints (floor 1) (n40+)"
+
+
+
+
+
+
+
+
+    "_note4": "Third Floor waypoints (floor 4)",
 
 
 
