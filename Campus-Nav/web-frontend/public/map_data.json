@@ -58,8 +58,22 @@
 
 
 
-    "_note4": "Third Floor waypoints (floor 1) (n40+)"
-
+    "_note4": "Third Floor waypoints (floor 1) (n40+)",
+    "n40": { "floor": 4, "x": 71, "y": 64, "neighbors": ["n41", "n42", "n53", "n54"] },
+    "n41": { "floor": 4, "x": 51, "y": 70, "neighbors": ["n40", "n53", "n54"] },
+    "n42": { "floor": 4, "x": 53, "y": 63, "neighbors": ["n40", "n41", "n53", "n54"] },
+    "n43": { "floor": 4, "x": 50, "y": 64, "neighbors": ["n42", "n44", "n48"] },
+    "n44": { "floor": 4, "x": 46, "y": 64, "neighbors": ["n43", "n45"] },
+    "n45": { "floor": 4, "x": 43, "y": 64, "neighbors": ["n44"] },
+    "n46": { "floor": 4, "x": 31, "y": 34, "neighbors": ["n47"] },
+    "n47": { "floor": 4, "x": 41, "y": 34, "neighbors": ["n46", "n48"] },
+    "n48": { "floor": 4, "x": 52, "y": 34, "neighbors": ["n43", "n47", "n49","n50"] },
+    "n49": { "floor": 4, "x": 67, "y": 30, "neighbors": ["n48"] },
+    "n50": { "floor": 4, "x": 64, "y": 36, "neighbors": ["n48", "n51", "n52"] },
+    "n51": { "floor": 4, "x": 74, "y": 29, "neighbors": ["n50", "n52"] },
+    "n52": { "floor": 4, "x": 71, "y": 38, "neighbors": ["n51", "n50"] },
+    "n53": { "floor": 4, "x": 63, "y": 57, "neighbors": ["n40", "n41", "n42"] },
+    "n54": { "floor": 4, "x": 62, "y": 66, "neighobrs": ["n40", "n41", "n42", "n53"] },
 
 
 
