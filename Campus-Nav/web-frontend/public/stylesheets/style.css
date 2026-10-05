@@ -249,6 +249,54 @@ h2, .subtitle-text {
     }
 }
 
+/* ==========================================
+   PRINT LAYOUT (For QR Code Stickers)
+   ========================================== */
+@media print {
+    /* Hide the top header and the main map card */
+    header, .card {
+        display: none !important;
+    }
+
+    /* Remove the page background color to save printer ink */
+    body {
+        background-color: white !important;
+    }
+
+    /* Ensure the QR dashboard takes up the full width of the paper */
+    #admin-qr-dashboard {
+        display: block !important;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+/* ==========================================
+   QR SCANNER UI POLISH
+   ========================================== */
+#reader button {
+    background-color: #00244E;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+}
+
+#reader button:hover {
+    background-color: #FDB913;
+    color: #00244E;
+}
+
+/* Add a little breathing room to the camera dropdown */
+#reader select {
+    padding: 5px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
 
 /* ========================================================
    PATHFINDING LINE GRAPHICS OVERLAY
@@ -261,4 +309,34 @@ h2, .subtitle-text {
     height: 100%;
     pointer-events: none; /* Allows users to click through the lines to interact with the map */
     z-index: 5; /* Keeps the lines above the map but below the location pin */
+}
+
+/* ==========================================
+   TURN-BY-TURN DIRECTIONS PANEL
+   ========================================== */
+#directions-panel {
+    background-color: #f8f9fa;
+    border-left: 4px solid #FDB913; /* SNHU Gold */
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 4px;
+    text-align: left;
+}
+
+#directions-panel h3 {
+    margin-top: 0;
+    color: #00244E; /* SNHU Blue */
+    font-size: 16px;
+}
+
+#directions-list {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+}
+
+#directions-list li {
+    margin-bottom: 8px;
 }

@@ -1,9 +1,11 @@
 {
   "waypoints": {
+    "_note1": "First Floor waypoints (floor 2)",
+
     "n1": { "floor": 2, "x": 48, "y": 54, "neighbors": ["n2", "n3", "n13"] },
     "n2": { "floor": 2, "x": 63, "y": 50, "neighbors": ["n1", "n4", "n8"] },
     "n3": { "floor": 2, "x": 30, "y": 59, "neighbors": ["n1", "n7", "n14"] },
-    "n4": { "floor": 2, "x": 65, "y": 64, "neighbors": ["n2", "n11"] },
+    "n4": { "floor": 2, "x": 65, "y": 64, "neighbors": ["n2", "n11"], "isElevator": true },
     "n5": { "floor": 2, "x": 20, "y": 38, "neighbors": ["n7", "n6"] },
     "n6": { "floor": 2, "x": 12, "y": 37, "neighbors": ["n5"] },
     "n7": { "floor": 2, "x": 29, "y": 38, "neighbors": ["n3", "n5"] },
@@ -13,14 +15,74 @@
     "n11": { "floor": 2, "x": 66, "y": 69, "neighbors": ["n4", "n12"] },
     "n12": { "floor": 2, "x": 60, "y": 71, "neighbors": ["n11"] },
     "n13": { "floor": 2, "x": 48, "y": 62, "neighbors": ["n1", "n14"] },
-    "n14": { "floor": 2, "x": 42, "y": 62, "neighbors": ["n3", "n13"] }
+    "n14": { "floor": 2, "x": 36, "y": 64, "neighbors": ["n3", "n13"] },
+
+    "_note2": "Basement waypoints (floor 1)",
+
+
+
+
+
+
+
+    "_note3": "Second Floor waypoints (floor 3)",
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    "_note4": "Third Floor waypoints (floor 4)",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   },
   "rooms": {
-    "014": { "floor": 1, "x": 58, "y": 25, "label": "014 IDEA Lab", "asset": "floor1.png", "entryNode": "" },
+    "014": { "floor": 1, "x": 58, "y": 28, "label": "014 IDEA Lab", "asset": "floor1.png", "entryNode": "" },
     "015": { "floor": 1, "x": 79, "y": 27, "label": "015 Wind Tunnel", "asset": "floor1.png", "entryNode": "" },
     "016": { "floor": 1, "x": 77, "y": 17, "label": "016 Room", "asset": "floor1.png", "entryNode": "" },
-    "014BATH": { "floor": 1, "x": 55, "y": 41, "label": "Basement Bathroom", "asset": "floor1.png", "entryNode": "" },
-    "014ELEV": { "floor": 1, "x": 59, "y": 65, "label": "Basement Elevator", "asset": "floor1.png", "entryNode": "" },
+    "014BATH": { "floor": 1, "x": 55, "y": 40, "label": "Basement Bathroom", "asset": "floor1.png", "entryNode": "" },
+    "014ELEV": { "floor": 1, "x": 59, "y": 63, "label": "Basement Elevator", "asset": "floor1.png", "entryNode": "" },
     
     "103": { "floor": 2, "x": 33, "y": 43, "label": "103 Room", "asset": "floor2.png", "entryNode": "n7" },
     "104A": { "floor": 2, "x": 38, "y": 26, "label": "104A Hub", "asset": "floor2.png", "entryNode": "n7" },
