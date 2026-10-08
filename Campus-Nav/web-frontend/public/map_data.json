@@ -75,8 +75,7 @@
     "n51": { "floor": 4, "x": 74, "y": 29, "neighbors": ["n50", "n52"] },
     "n52": { "floor": 4, "x": 71, "y": 38, "neighbors": ["n51", "n50"] },
     "n53": { "floor": 4, "x": 63, "y": 57, "neighbors": ["n40", "n41", "n42"] },
-    "n54": { "floor": 4, "x": 62, "y": 66, "neighobrs": ["n40", "n41", "n42", "n53"] },
-    "_note4": "Third Floor waypoints (floor 4)",
+    "n54": { "floor": 4, "x": 62, "y": 66, "neighobrs": ["n40", "n41", "n42", "n53"] }
 
 
 
