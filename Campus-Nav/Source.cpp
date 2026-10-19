@@ -51,18 +51,24 @@ vector<string> calculateShortestPath(string startNode, string endNode, const jso
 
             int floor1 = mapData["waypoints"][current]["floor"];
             int floor2 = mapData["waypoints"][neighbor]["floor"];
+            
 
             // HINT 1: Stairwell check goes here!
             // If requiresAccessible == true AND (floor1 != floor2) AND it is NOT an elevator node, use 'continue;'
+            bool isElevator = mapData["waypoints"][neighbor]["isElevator"] == "elevator";
+            if (requiresAccessible && floor1 != floor2 && !isElevator) {
+                continue;
+            }
+            else {
+                break;
+            }
 
             double x1 = mapData["waypoints"][current]["x"];
             double y1 = mapData["waypoints"][current]["y"];
             double x2 = mapData["waypoints"][neighbor]["x"];
             double y2 = mapData["waypoints"][neighbor]["y"];
 
-            // [TODO: Calculate the 2D Euclidean distance between Node 1 and Node 2]
-            // HINT 2: Use sqrt() and pow() from the <cmath> library to find the physical distance between (x1, y1) and (x2, y2).
-            double distance2D = 0.0; // Replace this!
+            double distance2D = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 
             double floorPenalty = (floor1 != floor2) ? 50.0 : 0.0;
             double weight = distance2D + floorPenalty;
