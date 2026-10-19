@@ -19,8 +19,10 @@
 
     "_note2": "Basement waypoints (floor 1)",
 
-
-
+    "n20": { "floor": 1, "x": 61, "y": 61, "neighbors": ["n21"] },
+    "n21": { "floor": 1, "x": 58, "y": 40, "neighbors": ["n20", "n22"] },
+    "n22": { "floor": 1, "x": 63, "y": 37, "neighbors": ["n23"] },
+    "n23": { "floor": 1, "x": 69, "y": 34, "neighbors": ["n22"] },
 
 
 
@@ -60,23 +62,7 @@
 
 
 
-    "_note4": "Third Floor waypoints (floor 1) (n40+)",
-    "n40": { "floor": 4, "x": 71, "y": 64, "neighbors": ["n41", "n42", "n53", "n54"] },
-    "n41": { "floor": 4, "x": 51, "y": 70, "neighbors": ["n40", "n53", "n54"] },
-    "n42": { "floor": 4, "x": 53, "y": 63, "neighbors": ["n40", "n41", "n53", "n54"] },
-    "n43": { "floor": 4, "x": 50, "y": 64, "neighbors": ["n42", "n44", "n48"] },
-    "n44": { "floor": 4, "x": 46, "y": 64, "neighbors": ["n43", "n45"] },
-    "n45": { "floor": 4, "x": 43, "y": 64, "neighbors": ["n44"] },
-    "n46": { "floor": 4, "x": 31, "y": 34, "neighbors": ["n47"] },
-    "n47": { "floor": 4, "x": 41, "y": 34, "neighbors": ["n46", "n48"] },
-    "n48": { "floor": 4, "x": 52, "y": 34, "neighbors": ["n43", "n47", "n49","n50"] },
-    "n49": { "floor": 4, "x": 67, "y": 30, "neighbors": ["n48"] },
-    "n50": { "floor": 4, "x": 64, "y": 36, "neighbors": ["n48", "n51", "n52"] },
-    "n51": { "floor": 4, "x": 74, "y": 29, "neighbors": ["n50", "n52"] },
-    "n52": { "floor": 4, "x": 71, "y": 38, "neighbors": ["n51", "n50"] },
-    "n53": { "floor": 4, "x": 63, "y": 57, "neighbors": ["n40", "n41", "n42"] },
-    "n54": { "floor": 4, "x": 62, "y": 66, "neighobrs": ["n40", "n41", "n42", "n53"] },
-    "_note4": "Third Floor waypoints (floor 4)",
+    "_note4": "Third Floor waypoints (floor 4)"
 
 
 
@@ -94,11 +80,11 @@
 
   },
   "rooms": {
-    "014": { "floor": 1, "x": 58, "y": 28, "label": "014 IDEA Lab", "asset": "floor1.png", "entryNode": "" },
-    "015": { "floor": 1, "x": 79, "y": 27, "label": "015 Wind Tunnel", "asset": "floor1.png", "entryNode": "" },
-    "016": { "floor": 1, "x": 77, "y": 17, "label": "016 Room", "asset": "floor1.png", "entryNode": "" },
-    "014BATH": { "floor": 1, "x": 55, "y": 40, "label": "Basement Bathroom", "asset": "floor1.png", "entryNode": "" },
-    "014ELEV": { "floor": 1, "x": 59, "y": 63, "label": "Basement Elevator", "asset": "floor1.png", "entryNode": "" },
+    "014": { "floor": 1, "x": 58, "y": 28, "label": "014 IDEA Lab", "asset": "floor1.png", "entryNode": "n22" },
+    "015": { "floor": 1, "x": 79, "y": 27, "label": "015 Wind Tunnel", "asset": "floor1.png", "entryNode": "n23" },
+    "016": { "floor": 1, "x": 77, "y": 17, "label": "016 Room", "asset": "floor1.png", "entryNode": "n23" },
+    "014BATH": { "floor": 1, "x": 55, "y": 40, "label": "Basement Bathroom", "asset": "floor1.png", "entryNode": "n21" },
+    "014ELEV": { "floor": 1, "x": 59, "y": 63, "label": "Basement Elevator", "asset": "floor1.png", "entryNode": "n20" },
     
     "103": { "floor": 2, "x": 33, "y": 43, "label": "103 Room", "asset": "floor2.png", "entryNode": "n7" },
     "104A": { "floor": 2, "x": 38, "y": 26, "label": "104A Hub", "asset": "floor2.png", "entryNode": "n7" },
@@ -107,8 +93,8 @@
     "107A": { "floor": 2, "x": 19, "y": 26, "label": "107A Room", "asset": "floor2.png", "entryNode": "n6" },
     "107B": { "floor": 2, "x": 9, "y": 26, "label": "107B Room", "asset": "floor2.png", "entryNode": "n6" },
     "108": { "floor": 2, "x": 19, "y": 43, "label": "108 Makerspace", "asset": "floor2.png", "entryNode": "n6" },
-    "109": { "floor": 2, "x": 10, "y": 43, "label": "109 Room", "asset": "floor2.png", "entryNode": "n6" },
-    "112": { "floor": 2, "x": 58, "y": 43, "label": "112 Room", "asset": "floor2.png", "entryNode": "n8" },
+    "109": { "floor": 2, "x": 9, "y": 43, "label": "109 Room", "asset": "floor2.png", "entryNode": "n6" },
+    "112": { "floor": 2, "x": 59, "y": 43, "label": "112 Room", "asset": "floor2.png", "entryNode": "n8" },
     "113A": { "floor": 2, "x": 53, "y": 26, "label": "113A Hub", "asset": "floor2.png", "entryNode": "n8" },
     "113B": { "floor": 2, "x": 51, "y": 43, "label": "113B Room", "asset": "floor2.png", "entryNode": "n8" },
     "115": { "floor": 2, "x": 68, "y": 39, "label": "115 Room", "asset": "floor2.png", "entryNode": "n8" },
