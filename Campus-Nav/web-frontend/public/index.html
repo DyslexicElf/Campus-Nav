@@ -145,6 +145,36 @@
             });
         }
 
+        function showRoomLocation(targetRoom) {
+            activeTargetRoom = targetRoom;
+            pin.dataset.targetFloor = targetRoom.floor;
+            pin.style.left = targetRoom.x + '%';
+            pin.style.top = targetRoom.y + '%';
+            pin.style.display = 'block';
+            setActiveFloor(targetRoom.floor);
+        }
+
+        function previewRoomLocation() {
+            const queryRoom = roomInput.value.trim().toUpperCase();
+            const targetRoom = roomDatabase[queryRoom];
+            currentActivePath = [];
+            document.getElementById('directions-panel').style.display = 'none';
+            errorMsg.style.display = 'none';
+
+            if (targetRoom) {
+                showRoomLocation(targetRoom);
+                return;
+            }
+
+            activeTargetRoom = null;
+            pin.style.display = 'none';
+            const activeButton = document.querySelector('.floor-btn.active');
+            if (activeButton) {
+                const floorNumber = activeButton.getAttribute('data-map').replace('images/floor', '').replace('.png', '');
+                renderPath(floorNumber);
+            }
+        }
+
         buttons.forEach(button => {
             button.addEventListener('click', function () {
                 const floorIndex = this.getAttribute('data-map').replace('images/floor', '').replace('.png', '');
@@ -173,12 +203,7 @@
             
             if (roomDatabase[queryRoom]) {
                 const targetRoom = roomDatabase[queryRoom];
-                activeTargetRoom = targetRoom; 
-                
-                pin.dataset.targetFloor = targetRoom.floor;
-                pin.style.left = targetRoom.x + '%';
-                pin.style.top = targetRoom.y + '%';
-                pin.style.display = 'block';
+                showRoomLocation(targetRoom);
 
                 if (targetRoom.entryNode) {
                     // Grab the accessibility checkbox state
@@ -229,6 +254,7 @@
         }
 
         locateBtn.addEventListener('click', executeManualSearch);
+        roomInput.addEventListener('input', previewRoomLocation);
         roomInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') executeManualSearch();
         });
@@ -292,6 +318,10 @@
                     
                     // Boot up the 1st Floor map ONLY after the data is fully loaded
                     renderPath('2');
+
+                    if (roomInput.value.trim()) {
+                        previewRoomLocation();
+                    }
                     generateQRDashboard();
 
                     // NEW: QR Code Scanner Logic - "You are here"
