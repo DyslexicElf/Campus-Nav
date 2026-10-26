@@ -26,53 +26,63 @@
 
 
 
-
     "_note3": "Second Floor waypoints (floor 3)",
 
+    "n200": { "floor": 2, "x": 60, "y": 58, "neighbors": ["n201"] }, 
+    "n201": { "floor": 2, "x": 69, "y": 57, "neighbors": ["n200", "n202", "n216"] }, 
+    "n202": { "floor": 2, "x": 67, "y": 41, "neighbors": ["n201", "n204", "n203"] },
+    "n203": { "floor": 2, "x": 57, "y": 41, "neighbors": ["n202", "n209"] }, 
+    "n204": { "floor": 2, "x": 65, "y": 34, "neighbors": ["n202", "n205"] }, 
+    "n205": { "floor": 2, "x": 72, "y": 30, "neighbors": ["n204", "n206"] },
+    "n206": { "floor": 2, "x": 76, "y": 29, "neighbors": ["n205", "n207", "n208"] }, 
+    "n207": { "floor": 2, "x": 78, "y": 34, "neighbors": ["n206"] }, 
+    "n208": { "floor": 2, "x": 85, "y": 24, "neighbors": ["n206"] }, 
+    "n209": { "floor": 2, "x": 49, "y": 42, "neighbors": ["n203", "n210"] }, 
+    "n210": { "floor": 2, "x": 41, "y": 42, "neighbors": ["n209", "n211"] }, 
+    "n211": { "floor": 2, "x": 37, "y": 42, "neighbors": ["n210", "n212"] }, 
+    "n212": { "floor": 2, "x": 30, "y": 40, "neighbors": ["n211", "n213", "n234"] }, 
+    "n213": { "floor": 2, "x": 29, "y": 34, "neighbors": ["n212", "n214"] }, 
+    "n214": { "floor": 2, "x": 23, "y": 35, "neighbors": ["n213", "n215"] }, 
+    "n215": { "floor": 2, "x": 15, "y": 34, "neighbors": ["n214"] }, 
+    "n216": { "floor": 2, "x": 70, "y": 64, "neighbors": ["n201", "n217", "n218", "n219"] }, 
+    "n217": { "floor": 2, "x": 65, "y": 64, "neighbors": ["n216"] }, 
+    "n218": { "floor": 2, "x": 69, "y": 68, "neighbors": ["n216", "n220"] }, 
+    "n219": { "floor": 2, "x": 77, "y": 69, "neighbors": ["n216"] }, 
+    "n220": { "floor": 2, "x": 62, "y": 70, "neighbors": ["n218", "n221", "n222"] }, 
+    "n221": { "floor": 2, "x": 64, "y": 76, "neighbors": ["n220"] },
+    "n222": { "floor": 2, "x": 58, "y": 70, "neighbors": ["n220", "n223"] }, 
+    "n223": { "floor": 2, "x": 54, "y": 71, "neighbors": ["n222", "n224", "n228"] }, 
+    "n224": { "floor": 2, "x": 48, "y": 72, "neighbors": ["n223", "n225"] }, 
+    "n225": { "floor": 2, "x": 46, "y": 72, "neighbors": ["n224", "n226"] }, 
+    "n226": { "floor": 2, "x": 40, "y": 73, "neighbors": ["n225", "n227"] }, 
+    "n227": { "floor": 2, "x": 34, "y": 74, "neighbors": ["n226", "n230", "n231"] }, 
+    "n228": { "floor": 2, "x": 54, "y": 80, "neighbors": ["n223", "n229"] },
+    "n229": { "floor": 2, "x": 52, "y": 81, "neighbors": ["n228", "n230"] }, 
+    "n230": { "floor": 2, "x": 44, "y": 83, "neighbors": ["n229", "n227"] }, 
+    "n231": { "floor": 2, "x": 30, "y": 76, "neighbors": ["n227", "n232", "n233"] }, 
+    "n232": { "floor": 2, "x": 33, "y": 85, "neighbors": ["n231"] }, 
+    "n233": { "floor": 2, "x": 27, "y": 76, "neighbors": ["n231", "n234"] },
+    "n234": { "floor": 2, "x": 26, "y": 68, "neighbors": ["n233", "n212"] },
 
 
 
-  
+    "_note4": "Third Floor waypoints (floor 4)",
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    "_note4": "Third Floor waypoints (floor 4)"
-
-
-
-
-
-
-
-
-
-
+    "n40": { "floor": 4, "x": 71, "y": 64, "neighbors": ["n41", "n42", "n53", "n54"] },
+    "n41": { "floor": 4, "x": 51, "y": 70, "neighbors": ["n40", "n53", "n54"] },
+    "n42": { "floor": 4, "x": 53, "y": 63, "neighbors": ["n40", "n41", "n53", "n54"] },
+    "n43": { "floor": 4, "x": 50, "y": 64, "neighbors": ["n42", "n44", "n48"] },
+    "n44": { "floor": 4, "x": 46, "y": 64, "neighbors": ["n43", "n45"] },
+    "n45": { "floor": 4, "x": 43, "y": 64, "neighbors": ["n44"] },
+    "n46": { "floor": 4, "x": 31, "y": 34, "neighbors": ["n47"] },
+    "n47": { "floor": 4, "x": 41, "y": 34, "neighbors": ["n46", "n48"] },
+    "n48": { "floor": 4, "x": 52, "y": 34, "neighbors": ["n43", "n47", "n49","n50"] },
+    "n49": { "floor": 4, "x": 67, "y": 30, "neighbors": ["n48"] },
+    "n50": { "floor": 4, "x": 64, "y": 36, "neighbors": ["n48", "n51", "n52"] },
+    "n51": { "floor": 4, "x": 74, "y": 29, "neighbors": ["n50", "n52"] },
+    "n52": { "floor": 4, "x": 71, "y": 38, "neighbors": ["n51", "n50"] },
+    "n53": { "floor": 4, "x": 63, "y": 57, "neighbors": ["n40", "n41", "n42"] },
+    "n54": { "floor": 4, "x": 62, "y": 66, "neighobrs": ["n40", "n41", "n42", "n53"] }
 
 
 
