@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Campus-Nav\\x64\\Debug\\Campus-Nav.obj",
+            "outputs": [
+                "Campus-Nav\\x64\\Debug\\Campus-Nav.cpp.obj.dt.module.json",
+                "Campus-Nav\\x64\\Debug\\Campus-Nav.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}
