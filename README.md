@@ -25,7 +25,7 @@ The initial foundation of the application is complete and ready for backend path
 
 ## 🛠️ Sprint 2 Handoff: C++ Backend Tasks
 
-The primary goal for the upcoming sprint is to finalize the pathfinding logic inside `Source.cpp`. The file contains specific `TODO` blocks outlining the required implementations:
+The primary goal for the upcoming sprint is to finalize the pathfinding logic inside `Campus-Nav.cpp`. The file contains specific `TODO` blocks outlining the required implementations:
 
 1. **Euclidean Distance Math:** Replace the temporary edge-weight placeholders inside the `calculateShortestPath` function with proper 2D distance calculations using the `<cmath>` library.
 2. **Accessible Routing:** Implement the `--accessible` command-line flag. When true, the engine must evaluate the `"isElevator"` flag in the JSON database and intentionally skip standard stairwell edges to force an accessible route.
@@ -57,7 +57,7 @@ The primary goal for the upcoming sprint is to finalize the pathfinding logic in
 * **QR Code & Localization:** Integrated the `html5-qrcode` scanner for live camera positioning and engineered the print-optimized Bulk Room QR Code directory for physical campus deployment.
 * **Backend API Bridge:** Built the Node.js/Express server and the `child_process` bridge to handle HTTP requests and seamlessly execute the native C++ engine.
 * **Database Architecture:** Mapped the physical campus coordinates and authored the unified `map_data.json` waypoint and routing database.
-* **C++ Engine Scaffolding:** Drafted the `Source.cpp` boilerplate, configured the `nlohmann/json` NuGet package, and architected the structural outlines for Dijkstra's algorithm, multi-stop routing, and accessibility flags to establish the Sprint 2 foundation.
+* **C++ Engine Scaffolding:** Drafted the `Campus-Nav.cpp` boilerplate, configured the `nlohmann/json` NuGet package, and architected the structural outlines for Dijkstra's algorithm, multi-stop routing, and accessibility flags to establish the Sprint 2 foundation.
 
 **Evan Duchette (The-Evan-Duchette)**
 * *(Sprint 2)* Implement 2D Euclidean distance math within the pathfinding engine.
