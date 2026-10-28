@@ -61,10 +61,10 @@ h2, .subtitle-text {
     font-weight: bold;
 }
 
-    #manual-room-input:focus {
-        outline: none;
-        box-shadow: 0 0 8px rgba(253, 185, 19, 0.6);
-    }
+#manual-room-input:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(253, 185, 19, 0.6);
+}
 
 #manual-locate-btn, #scan-qr-btn {
     flex: 1;
@@ -79,9 +79,9 @@ h2, .subtitle-text {
     transition: background-color 0.2s;
 }
 
-    #manual-locate-btn:active {
-        background-color: #e0a30d;
-    }
+#manual-locate-btn:active {
+    background-color: #e0a30d;
+}
 
 /* ========================================================
    FLOOR NAVIGATION BUTTON MENU SWITCHER
@@ -106,11 +106,11 @@ h2, .subtitle-text {
     text-align: center;
 }
 
-    /* Active buttons turn gold to track location clicks */
-    .floor-btn.active {
-        background-color: #FDB913;
-        color: #00244E;
-    }
+/* Active buttons turn gold to track location clicks */
+.floor-btn.active {
+    background-color: #FDB913;
+    color: #00244E;
+}
 
 /* Core containment rules mapping bounds layout */
 .map-wrapper {
@@ -130,7 +130,7 @@ h2, .subtitle-text {
 }
 
 /* ========================================================
-   "YOU ARE HERE" PULSING BEACON OVERLAY ENGINE
+   "DESTINATION" RED PULSING BEACON OVERLAY ENGINE
    ======================================================== */
 #location-pin {
     position: absolute;
@@ -145,17 +145,45 @@ h2, .subtitle-text {
     display: none; /* Controlled dynamically by JavaScript lookup routing */
 }
 
-    #location-pin::after {
-        content: '';
-        position: absolute;
-        top: -3px;
-        left: -3px;
-        width: 18px;
-        height: 18px;
-        border: 3px solid #ff3b30;
-        border-radius: 50%;
-        animation: beaconPulse 1.8s infinite ease-out;
-    }
+#location-pin::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    width: 18px;
+    height: 18px;
+    border: 3px solid #ff3b30;
+    border-radius: 50%;
+    animation: beaconPulse 1.8s infinite ease-out;
+}
+
+/* ========================================================
+   "YOU ARE HERE" BLUE START PIN
+   ======================================================== */
+#start-pin {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: #009DEA; /* SNHU Light Blue */
+    border: 3px solid white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%); 
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 11;
+    display: none; 
+}
+
+#start-pin::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    width: 16px;
+    height: 16px;
+    border: 3px solid #009DEA;
+    border-radius: 50%;
+    animation: beaconPulse 2s infinite ease-out;
+}
 
 @keyframes beaconPulse {
     0% {
@@ -196,7 +224,6 @@ h2, .subtitle-text {
     box-shadow: 0 6px 15px rgba(0,0,0,0.1);
 }
 
-/* Massive isolated room code designed to stand out down hallways */
 .distance-title {
     font-size: 72px;
     font-weight: 900;
@@ -206,7 +233,6 @@ h2, .subtitle-text {
     letter-spacing: -2px;
 }
 
-/* Scaled footprint for the scanning barcode barcode */
 .qr-card img {
     width: 180px;
     height: 180px;
@@ -214,13 +240,12 @@ h2, .subtitle-text {
     display: block;
 }
 
-/* Small, clean description tag anchored safely at the base */
 .distance-subtitle {
     font-size: 13px;
     font-weight: 900;
     letter-spacing: 1px;
     color: #fff;
-    background-color: #00244E; /* Dark framing block at the base */
+    background-color: #00244E; 
     padding: 8px;
     border-radius: 4px;
     margin-top: 15px;
@@ -247,23 +272,15 @@ h2, .subtitle-text {
         width: 100%;
         border: none;
     }
-}
-
-/* ==========================================
-   PRINT LAYOUT (For QR Code Stickers)
-   ========================================== */
-@media print {
-    /* Hide the top header and the main map card */
+    
     header, .card {
         display: none !important;
     }
 
-    /* Remove the page background color to save printer ink */
     body {
         background-color: white !important;
     }
 
-    /* Ensure the QR dashboard takes up the full width of the paper */
     #admin-qr-dashboard {
         display: block !important;
         width: 100%;
@@ -291,7 +308,6 @@ h2, .subtitle-text {
     color: #00244E;
 }
 
-/* Add a little breathing room to the camera dropdown */
 #reader select {
     padding: 5px;
     margin-bottom: 10px;
@@ -312,31 +328,32 @@ h2, .subtitle-text {
 }
 
 /* ==========================================
-   TURN-BY-TURN DIRECTIONS PANEL
+   DEBUG TOGGLE BUTTON
    ========================================== */
-#directions-panel {
-    background-color: #f8f9fa;
-    border-left: 4px solid #FDB913; /* SNHU Gold */
-    padding: 15px;
-    margin: 15px 0;
+#debug-toggle {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    background-color: black;
+    color: white;
+    font-family: sans-serif;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 6px 10px;
     border-radius: 4px;
-    text-align: left;
+    cursor: pointer;
+    z-index: 9999;
+    opacity: 0.5;
+    transition: opacity 0.2s;
 }
 
-#directions-panel h3 {
-    margin-top: 0;
-    color: #00244E; /* SNHU Blue */
-    font-size: 16px;
+#debug-toggle:hover {
+    opacity: 1;
 }
 
-#directions-list {
-    margin: 0;
-    padding-left: 20px;
-    font-size: 14px;
-    color: #333;
-    line-height: 1.5;
-}
-
-#directions-list li {
-    margin-bottom: 8px;
+/* Hide the toggle button when printing QR codes */
+@media print {
+    #debug-toggle {
+        display: none !important;
+    }
 }

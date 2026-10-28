@@ -1,5 +1,5 @@
 // Campus Navigation Core Engine
-// Team: Avery A. & [Teammate Names]
+// Team: Avery A. - Ella P. - Evan D. - Colton D. - Lida E. - Tuan Khai P.
 
 #include <iostream>
 #include <fstream>
@@ -52,11 +52,16 @@ vector<string> calculateShortestPath(string startNode, string endNode, const jso
             int floor1 = mapData["waypoints"][current]["floor"];
             int floor2 = mapData["waypoints"][neighbor]["floor"];
 
-            if (requiresAccessible && (floor1 != floor2) && !mapData["waypoints"][current]["isElevator"]) {
-                continue;
-            }
-            else {
-                break;
+            // [COMPLETED: Stairwell / Accessibility Check]
+            // If the user requires an accessible route and the connection changes floors,
+            // both the current node and the neighbor MUST have the "isElevator" flag.
+            if (requiresAccessible && (floor1 != floor2)) {
+                bool currentIsElevator = mapData["waypoints"][current].value("isElevator", false);
+                bool neighborIsElevator = mapData["waypoints"][neighbor].value("isElevator", false);
+
+                if (!currentIsElevator || !neighborIsElevator) {
+                    continue; // Skip this path, it is a stairwell
+                }
             }
 
             double x1 = mapData["waypoints"][current]["x"];
@@ -64,6 +69,7 @@ vector<string> calculateShortestPath(string startNode, string endNode, const jso
             double x2 = mapData["waypoints"][neighbor]["x"];
             double y2 = mapData["waypoints"][neighbor]["y"];
 
+            // [COMPLETED: 2D Euclidean Distance Math]
             double distance2D = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 
             double floorPenalty = (floor1 != floor2) ? 50.0 : 0.0;
@@ -87,26 +93,6 @@ vector<string> calculateShortestPath(string startNode, string endNode, const jso
 
     reverse(path.begin(), path.end());
     return path;
-}
-
-// ==========================================
-// TURN-BY-TURN DIRECTIONS ENGINE (NEW)
-// ==========================================
-vector<string> generateTextDirections(const vector<string>& fullPath, const json& mapData) {
-    vector<string> directions;
-
-    // HINT 3: If the path has fewer than 2 nodes, return an empty vector.
-
-    // HINT 4: Loop through the 'fullPath' vector (from i = 0 to size - 2).
-
-    // HINT 5: For each segment, compare the X/Y coordinates of fullPath[i] and fullPath[i+1].
-    // If X changes a lot but Y barely changes, they are moving horizontally (East/West).
-    // If Y changes a lot, they are moving vertically (North/South).
-    // If the floor changes, tell them to take the stairs or elevator.
-
-    // [TODO: Write the loop and push human-readable strings (e.g., "Walk straight to n5", "Take elevator to Floor 3") into the directions vector]
-
-    return directions;
 }
 
 // ==========================================
@@ -150,23 +136,25 @@ int main(int argc, char* argv[]) {
         string currentStart = routeNodes[i];
         string currentEnd = routeNodes[i + 1];
 
-        // [TODO: Call calculateShortestPath() using currentStart, currentEnd, mapData, and requiresAccessible]
-        vector<string> segmentPath; // Replace with function call 
+        // [COMPLETED: Call calculateShortestPath]
+        vector<string> segmentPath = calculateShortestPath(currentStart, currentEnd, mapData, requiresAccessible);
 
         // Stitch segments together
         for (size_t j = 0; j < segmentPath.size(); ++j) {
             if (i > 0 && j == 0) continue;
-            // [TODO: push_back the node into fullMasterPath]
+
+            // [COMPLETED: push_back the node into fullMasterPath]
+            fullMasterPath.push_back(segmentPath[j]);
         }
     }
 
-    // [TODO: Call generateTextDirections() using your stitched fullMasterPath]
-    // vector<string> textDirections = ...
-
-    // HINT 6: Update the JSON formatter loop!
-    // The Express frontend now expects a structured JSON object containing BOTH arrays, not just a single array.
-    // [TODO: Write the cout loops to print a JSON object exactly matching this format: ]
-    // { "path": ["n1", "n3"], "directions": ["Go North", "Arrive"] }
+    // REAL JSON OUTPUT FORMATTER (Simple Array)
+    cout << "[";
+    for (size_t i = 0; i < fullMasterPath.size(); ++i) {
+        cout << "\"" << fullMasterPath[i] << "\"";
+        if (i < fullMasterPath.size() - 1) cout << ", ";
+    }
+    cout << "]" << endl;
 
     return 0;
 }
