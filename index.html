@@ -21,7 +21,7 @@
             <div class="building-select-group" style="margin: 10px 0 15px 0; display: flex; align-items: center; gap: 10px;">
                 <label for="building-select" style="font-weight: bold; font-size: 14px;">Building:</label>
                 <select id="building-select" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; flex-grow: 1; background: #fff; cursor: pointer;">
-                    <option value="campus">Campus </option>
+                    <option value="Campus">Campus </option>
                     <option value="Paul">Paul Hall</option>
                     <option value="Robert">Robert Frost</option>
                 </select>
@@ -72,7 +72,7 @@
     
     // --- MULTI-BUILDING DYNAMIC CONFIGURATION ---
     const urlParams = new URLSearchParams(window.location.search);
-    let activeBuilding = urlParams.get('building') || 'campus'; 
+    let activeBuilding = urlParams.get('building') || 'Campus'; 
     
     const buildingSelect = document.getElementById('building-select');
     buildingSelect.value = activeBuilding;
@@ -182,7 +182,7 @@
             if (targetIndex === floorNumber.toString()) {
                 buttons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-                mapImage.setAttribute('src', `images/${activeBuilding}/floor${floorNumber}.png`);
+                mapImage.setAttribute('src', `images/${activeBuilding}/${floorNumber}.png`);
                 renderPath(floorNumber);
             }
         });
@@ -366,7 +366,7 @@
     // 4. DATA INITIALIZATION
     // ==========================================
     function loadBuildingData() {
-        // Matches JSON files like data/Paul_map.json or data/campus_map.json
+        // Matches JSON files like data/Paul_map.json or data/Campus_map.json
         fetch(`data/${activeBuilding}_map.json`)
             .then(response => {
                 if (!response.ok) throw new Error(`Could not load ${activeBuilding}_map.json`);
