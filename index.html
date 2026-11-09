@@ -16,6 +16,17 @@
     <main class="container">
         <section class="card">
             <h2>Building Directory</h2>
+
+            <!-- Building Selection Dropdown (Moved above the search/directory controls) -->
+            <div class="building-select-group" style="margin: 10px 0 15px 0; display: flex; align-items: center; gap: 10px;">
+                <label for="building-select" style="font-weight: bold; font-size: 14px;">Building:</label>
+                <select id="building-select" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; flex-grow: 1; background: #fff; cursor: pointer;">
+                    <option value="campus">Campus </option>
+                    <option value="Paul">Paul Hall</option>
+                    <option value="Robert">Robert Frost</option>
+                </select>
+            </div>
+
             <p class="subtitle-text">Select a floor, scan a room QR code, or type a room ID below:</p>
 
             <div class="search-group">
@@ -29,24 +40,14 @@
                 <label for="accessible-toggle">Require Elevator / Accessible Route</label>
             </div>
 
-            <!-- Building Selection Dropdown (Placed between directory controls and floor menu) -->
-            <div class="building-select-group" style="margin: 15px 0; display: flex; align-items: center; gap: 10px;">
-                <label for="building-select" style="font-weight: bold; font-size: 14px;">Building:</label>
-                <select id="building-select" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; flex-grow: 1; background: #fff; cursor: pointer;">
-                    <option value="campus">Campus (Main)</option>
-                    <option value="Paul">Paul Building</option>
-                    <option value="Robert">Robert Building</option>
-                </select>
-            </div>
-
             <div id="reader" style="width: 100%; max-width: 400px; margin: 10px auto; display: none;"></div>
             <p id="search-error-msg" style="display: none; color: #ff3b30; font-size: 13px; margin-top: 5px; font-weight: bold;"></p>
 
             <nav class="floor-menu">
-                <button class="floor-btn" data-floor="images/Paul_Hall/floor1.png">Basement</button>
-                <button class="floor-btn active" data-floor="images/Paul_Hall/floor2.png">1st Floor</button>
-                <button class="floor-btn" data-floor="images/Paul_Hall/floor3.png">2nd Floor</button>
-                <button class="floor-btn" data-floor="images/Paul_Hall/floor4.png">3rd Floor</button>
+                <button class="floor-btn" data-floor="1">Basement</button>
+                <button class="floor-btn active" data-floor="2">1st Floor</button>
+                <button class="floor-btn" data-floor="3">2nd Floor</button>
+                <button class="floor-btn" data-floor="4">3rd Floor</button>
             </nav>
 
             <div class="map-wrapper">
@@ -73,14 +74,12 @@
     const urlParams = new URLSearchParams(window.location.search);
     let activeBuilding = urlParams.get('building') || 'campus'; 
     
-    // Sync dropdown state with URL parameter on load
     const buildingSelect = document.getElementById('building-select');
     buildingSelect.value = activeBuilding;
 
-    // Clean Header Title Update
-    document.getElementById('building-title').innerText = `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map - Campus-Nav`;
+    const displayBuildingName = activeBuilding === 'Paul' ? 'Paul Hall' : `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map`;
+    document.getElementById('building-title').innerText = `${displayBuildingName} - Campus-Nav`;
 
-    // Global variables
     let currentActivePath = [];
     let activeTargetRoom = null;
     let currentStartNode = "n1"; 
@@ -100,19 +99,18 @@
     const readerDiv = document.getElementById('reader');
     const qrGrid = document.getElementById('qr-grid');
 
-    // Handle manual dropdown change
     buildingSelect.addEventListener('change', (e) => {
         const selectedBuilding = e.target.value;
-        // Update URL parameter without reloading the whole page, then reload data
         const newUrl = `${window.location.pathname}?building=${selectedBuilding}`;
         window.history.pushState({ path: newUrl }, '', newUrl);
         activeBuilding = selectedBuilding;
-        document.getElementById('building-title').innerText = `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map - Campus-Nav`;
+        const currentName = activeBuilding === 'Paul' ? 'Paul Hall' : `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map`;
+        document.getElementById('building-title').innerText = `${currentName} - Campus-Nav`;
         loadBuildingData();
     });
 
     // ==========================================
-    // 1. FRONTEND JAVASCRIPT DIJKSTRA ALGORITHM
+    // 1. DIJKSTRA ALGORITHM
     // ==========================================
     function calculateShortestPath(startNode, endNode, requiresAccessible) {
         const distances = {};
@@ -174,7 +172,6 @@
         }
         return path.reverse();
     }
-
 
     // ==========================================
     // 2. UI NAVIGATION & SEARCH
@@ -245,13 +242,9 @@
 
             if (targetRoom.entryNode) {
                 const isAccessible = document.getElementById('accessible-toggle').checked;
-                
                 try {
                     currentActivePath = calculateShortestPath(currentStartNode, targetRoom.entryNode, isAccessible);
-                    
-                    if(currentActivePath.length <= 1) {
-                         throw new Error("No valid route found.");
-                    }
+                    if(currentActivePath.length <= 1) throw new Error("No valid route found.");
                     setActiveFloor(targetRoom.floor);
                     roomInput.blur();
                 } catch (err) {
@@ -303,21 +296,16 @@
                     }
                 }
             } catch (e) {
-                console.error("Invalid QR Code scanned.");
                 errorMsg.textContent = "Unrecognized QR format.";
                 errorMsg.style.display = 'block';
             }
 
-            html5QrCode.stop().then(() => {
-                readerDiv.style.display = 'none';
-            });
+            html5QrCode.stop().then(() => { readerDiv.style.display = 'none'; });
         };
 
-        const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+        html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, qrCodeSuccessCallback)
             .catch(err => {
-                console.error("Camera access denied", err);
-                errorMsg.textContent = "Camera access denied. Please check device permissions.";
+                errorMsg.textContent = "Camera access denied.";
                 errorMsg.style.display = 'block';
                 readerDiv.style.display = 'none';
             });
@@ -348,7 +336,6 @@
             for (let i = 0; i < currentActivePath.length - 1; i++) {
                 const n1 = waypoints[currentActivePath[i]];
                 const n2 = waypoints[currentActivePath[i + 1]];
-
                 if (n1 && n2 && n1.floor == floorNumber && n2.floor == floorNumber) {
                     svgOverlay.innerHTML += `<line x1="${n1.x}%" y1="${n1.y}%" x2="${n2.x}%" y2="${n2.y}%" stroke="#FDB913" stroke-width="6" />`;
                 }
@@ -358,7 +345,6 @@
         if (currentActivePath.length > 0 && activeTargetRoom && activeTargetRoom.floor == floorNumber) {
             const finalNodeId = currentActivePath[currentActivePath.length - 1];
             const finalNode = waypoints[finalNodeId];
-
             if (finalNode && finalNode.floor == floorNumber) {
                 svgOverlay.innerHTML += `<line x1="${finalNode.x}%" y1="${finalNode.y}%" x2="${activeTargetRoom.x}%" y2="${activeTargetRoom.y}%" stroke="#FDB913" stroke-width="6" />`;
             }
@@ -377,9 +363,10 @@
     }
 
     // ==========================================
-    // 4. DATA INITIALIZATION & QR DASHBOARD
+    // 4. DATA INITIALIZATION
     // ==========================================
     function loadBuildingData() {
+        // Matches JSON files like data/Paul_map.json or data/campus_map.json
         fetch(`data/${activeBuilding}_map.json`)
             .then(response => {
                 if (!response.ok) throw new Error(`Could not load ${activeBuilding}_map.json`);
@@ -388,23 +375,9 @@
             .then(data => {
                 waypoints = data.waypoints;
                 roomDatabase = data.rooms;
-                
                 setActiveFloor('2');
-
-                if (roomInput.value.trim()) {
-                    previewRoomLocation();
-                }
+                if (roomInput.value.trim()) previewRoomLocation();
                 generateQRDashboard();
-
-                const scannedRoom = new URLSearchParams(window.location.search).get('room');
-                if (scannedRoom && roomDatabase[scannedRoom]) {
-                    const startRoomData = roomDatabase[scannedRoom];
-                    if (startRoomData.entryNode) {
-                        currentStartNode = startRoomData.entryNode;
-                        roomInput.placeholder = `You are at ${scannedRoom}. Where to?`;
-                        setActiveFloor(startRoomData.floor);
-                    }
-                }
             })
             .catch(error => {
                 console.error("Error loading map data:", error);
@@ -417,24 +390,11 @@
         loadBuildingData();
     });
 
-    document.querySelector('.map-wrapper').addEventListener('click', function(e) {
-        if (!isDebugMode) return; 
-        const rect = this.getBoundingClientRect();
-        const clickX = Math.round(((e.clientX - rect.left) / rect.width) * 100);
-        const clickY = Math.round(((e.clientY - rect.top) / rect.height) * 100);
-        
-        const activeBtn = document.querySelector('.floor-btn.active');
-        const floor = activeBtn ? activeBtn.getAttribute('data-floor') : 'unknown';
-        alert(`"n_NEW": { "floor": ${floor}, "x": ${clickX}, "y": ${clickY}, "neighbors": [] }`);
-    });
-
     function generateQRDashboard() {
         qrGrid.innerHTML = ''; 
-
         for (const [roomId, roomInfo] of Object.entries(roomDatabase)) {
             const roomUrl = `${baseUrl}?building=${activeBuilding}&room=${roomId}`; 
             const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(roomUrl)}`;
-            
             qrGrid.innerHTML += `
                 <div style="text-align: center; border: 1px solid #ccc; padding: 10px; border-radius: 8px; width: 170px;">
                     <img src="${qrImageUrl}" alt="QR for ${roomId}" style="width: 150px; height: 150px;">
@@ -443,7 +403,6 @@
                 </div>
             `;
         }
-        
         qrGrid.style.display = "flex";
         qrGrid.style.flexWrap = "wrap";
         qrGrid.style.gap = "20px";
@@ -453,40 +412,29 @@
     document.getElementById('debug-toggle').addEventListener('click', function() {
         isDebugMode = !isDebugMode; 
         const dashboard = document.getElementById('admin-qr-dashboard');
-        
-        if (isDebugMode) {
-            dashboard.style.display = 'flex'; 
-            this.style.opacity = '1';
-        } else {
-            dashboard.style.display = 'none'; 
-            this.style.opacity = '0.5';
-        }
-        
+        dashboard.style.display = isDebugMode ? 'flex' : 'none'; 
+        this.style.opacity = isDebugMode ? '1' : '0.5';
         const activeFloorBtn = document.querySelector('.floor-btn.active');
-        if (activeFloorBtn) {
-            renderPath(activeFloorBtn.getAttribute('data-floor'));
-        }
+        if (activeFloorBtn) renderPath(activeFloorBtn.getAttribute('data-floor'));
     });
 
     // ==========================================
-    // 5. ANDROID APP BRIDGE (With Auto-Dropdown Sync)
+    // 5. ANDROID APP BRIDGE
     // ==========================================
     window.updateLiveLocation = function(liveNodeId, newBuilding = null) {
-        // If the Android app also passes a building name during tracking, switch automatically
         if (newBuilding && newBuilding !== activeBuilding) {
             activeBuilding = newBuilding;
             buildingSelect.value = activeBuilding;
-            document.getElementById('building-title').innerText = `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map - Campus-Nav`;
+            const currentName = activeBuilding === 'Paul' ? 'Paul Hall' : `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map`;
+            document.getElementById('building-title').innerText = `${currentName} - Campus-Nav`;
             loadBuildingData();
             return;
         }
 
         const nodeData = waypoints[liveNodeId] || roomDatabase[liveNodeId];
-        
         if (nodeData) {
             currentStartNode = nodeData.entryNode || liveNodeId;
             roomInput.placeholder = "Live Tracking Active...";
-            
             if (activeTargetRoom) {
                 const targetNode = activeTargetRoom.entryNode;
                 const isAccessible = document.getElementById('accessible-toggle').checked;
@@ -497,7 +445,6 @@
             }
         }
     };
-
     </script>
 </body>
 </html>
