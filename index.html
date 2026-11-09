@@ -29,14 +29,24 @@
                 <label for="accessible-toggle">Require Elevator / Accessible Route</label>
             </div>
 
+            <!-- Building Selection Dropdown (Placed between directory controls and floor menu) -->
+            <div class="building-select-group" style="margin: 15px 0; display: flex; align-items: center; gap: 10px;">
+                <label for="building-select" style="font-weight: bold; font-size: 14px;">Building:</label>
+                <select id="building-select" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; flex-grow: 1; background: #fff; cursor: pointer;">
+                    <option value="campus">Campus (Main)</option>
+                    <option value="Paul">Paul Building</option>
+                    <option value="Robert">Robert Building</option>
+                </select>
+            </div>
+
             <div id="reader" style="width: 100%; max-width: 400px; margin: 10px auto; display: none;"></div>
             <p id="search-error-msg" style="display: none; color: #ff3b30; font-size: 13px; margin-top: 5px; font-weight: bold;"></p>
 
             <nav class="floor-menu">
-                <button class="floor-btn" data-floor="1">Basement</button>
-                <button class="floor-btn active" data-floor="2">1st Floor</button>
-                <button class="floor-btn" data-floor="3">2nd Floor</button>
-                <button class="floor-btn" data-floor="4">3rd Floor</button>
+                <button class="floor-btn" data-floor="images/Paul_Hall/floor1.png">Basement</button>
+                <button class="floor-btn active" data-floor="images/Paul_Hall/floor2.png">1st Floor</button>
+                <button class="floor-btn" data-floor="images/Paul_Hall/floor3.png">2nd Floor</button>
+                <button class="floor-btn" data-floor="images/Paul_Hall/floor4.png">3rd Floor</button>
             </nav>
 
             <div class="map-wrapper">
@@ -63,8 +73,12 @@
     const urlParams = new URLSearchParams(window.location.search);
     let activeBuilding = urlParams.get('building') || 'campus'; 
     
-    // Updates the main header to e.g., "Engineering Campus-Nav"
-    document.getElementById('building-title').innerText = activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1) + " Campus-Nav";
+    // Sync dropdown state with URL parameter on load
+    const buildingSelect = document.getElementById('building-select');
+    buildingSelect.value = activeBuilding;
+
+    // Clean Header Title Update
+    document.getElementById('building-title').innerText = `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map - Campus-Nav`;
 
     // Global variables
     let currentActivePath = [];
@@ -86,6 +100,17 @@
     const readerDiv = document.getElementById('reader');
     const qrGrid = document.getElementById('qr-grid');
 
+    // Handle manual dropdown change
+    buildingSelect.addEventListener('change', (e) => {
+        const selectedBuilding = e.target.value;
+        // Update URL parameter without reloading the whole page, then reload data
+        const newUrl = `${window.location.pathname}?building=${selectedBuilding}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+        activeBuilding = selectedBuilding;
+        document.getElementById('building-title').innerText = `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map - Campus-Nav`;
+        loadBuildingData();
+    });
+
     // ==========================================
     // 1. FRONTEND JAVASCRIPT DIJKSTRA ALGORITHM
     // ==========================================
@@ -94,7 +119,6 @@
         const previous = {};
         const queue = [];
 
-        // Initialize distances
         for (const nodeId in waypoints) {
             distances[nodeId] = Infinity;
             previous[nodeId] = null;
@@ -355,7 +379,7 @@
     // ==========================================
     // 4. DATA INITIALIZATION & QR DASHBOARD
     // ==========================================
-    window.addEventListener('DOMContentLoaded', () => {
+    function loadBuildingData() {
         fetch(`data/${activeBuilding}_map.json`)
             .then(response => {
                 if (!response.ok) throw new Error(`Could not load ${activeBuilding}_map.json`);
@@ -372,7 +396,7 @@
                 }
                 generateQRDashboard();
 
-                const scannedRoom = urlParams.get('room');
+                const scannedRoom = new URLSearchParams(window.location.search).get('room');
                 if (scannedRoom && roomDatabase[scannedRoom]) {
                     const startRoomData = roomDatabase[scannedRoom];
                     if (startRoomData.entryNode) {
@@ -387,6 +411,10 @@
                 errorMsg.textContent = `System error: Failed to load coordinates for ${activeBuilding} building.`;
                 errorMsg.style.display = 'block';
             });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        loadBuildingData();
     });
 
     document.querySelector('.map-wrapper').addEventListener('click', function(e) {
@@ -441,9 +469,18 @@
     });
 
     // ==========================================
-    // 5. ANDROID APP BRIDGE
+    // 5. ANDROID APP BRIDGE (With Auto-Dropdown Sync)
     // ==========================================
-    window.updateLiveLocation = function(liveNodeId) {
+    window.updateLiveLocation = function(liveNodeId, newBuilding = null) {
+        // If the Android app also passes a building name during tracking, switch automatically
+        if (newBuilding && newBuilding !== activeBuilding) {
+            activeBuilding = newBuilding;
+            buildingSelect.value = activeBuilding;
+            document.getElementById('building-title').innerText = `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map - Campus-Nav`;
+            loadBuildingData();
+            return;
+        }
+
         const nodeData = waypoints[liveNodeId] || roomDatabase[liveNodeId];
         
         if (nodeData) {
