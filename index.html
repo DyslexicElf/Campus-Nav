@@ -59,7 +59,7 @@
         </section>
     </main>
 
-    <section id="admin-qr-dashboard">
+    <section id="admin-qr-dashboard" style="display: none; flex-direction: column;">
         <h2>Bulk Room QR Code Sheet</h2>
         <p>Press <strong>Ctrl + P</strong> (or Cmd + P on Mac) to print this page or save it as a PDF sticker index directory!</p>
         <div id="qr-grid"></div>
@@ -72,7 +72,7 @@
     
     // --- MULTI-BUILDING DYNAMIC CONFIGURATION ---
     const urlParams = new URLSearchParams(window.location.search);
-    let activeBuilding = urlParams.get('building') || 'Campus'; 
+    let activeBuilding = urlParams.get('building') || 'campus'; 
     
     const buildingSelect = document.getElementById('building-select');
     buildingSelect.value = activeBuilding;
@@ -382,8 +382,10 @@
             })
             .catch(error => {
                 console.error("Error loading map data:", error);
+                if (isDebugMode) {
                 errorMsg.textContent = `System error: Failed to load coordinates for ${activeBuilding} building.`;
                 errorMsg.style.display = 'block';
+                }
             });
     }
 
