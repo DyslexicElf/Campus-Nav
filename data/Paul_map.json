@@ -5,7 +5,7 @@
     "n3": { "floor": 2, "x": 48, "y": 54, "neighbors": ["n1", "n2", "n14"] },
     "n2": { "floor": 2, "x": 63, "y": 50, "neighbors": ["n3", "n4", "n8"] },
     "n1": { "floor": 2, "x": 30, "y": 59, "neighbors": ["n3", "n14", "n13", "n7"] },
-    "n4": { "floor": 2, "x": 65, "y": 64, "isElevator":["n2", "n11", "n20", "n18"] },
+    "n4": { "floor": 2, "x": 65, "y": 64, "neighbors":["n2", "n11", "n20", "n18"] },
     "n5": { "floor": 2, "x": 20, "y": 38, "neighbors": ["n7", "n6"] },
     "n6": { "floor": 2, "x": 12, "y": 37, "neighbors": ["n5"] },
     "n7": { "floor": 2, "x": 29, "y": 38, "neighbors": ["n5", "n1"] },
@@ -19,7 +19,7 @@
     "n15": { "floor": 2, "x": 78, "y": 34, "neighbors": ["n9", "n23", "n52"] },
     "n16": { "floor": 2, "x": 28, "y": 74, "neighbors": ["n1", "n17"] },
     "n17": { "floor": 2, "x": 31, "y": 80, "neighbors": ["n16", "n232"] },
-    "n18": { "floor": 2, "x": 65, "y": 64, "isElevator": true, "neighbors": ["n4", "n235", "n24"] },
+    "n18": { "floor": 2, "x": 62, "y": 65, "isElevator": true, "neighbors": ["n4", "n235", "n24"] },
 
     "_note2": "Basement waypoints (floor 1)",
 
@@ -27,8 +27,9 @@
     "n21": { "floor": 1, "x": 58, "y": 40, "neighbors": ["n20", "n22"] },
     "n22": { "floor": 1, "x": 63, "y": 37, "neighbors": ["n23"] },
     "n23": { "floor": 1, "x": 69, "y": 34, "neighbors": ["n22"] },
-    "n24": { "floor": 1, "x": 65, "y": 64, "isElevator": true, "neighbors": ["n20", "n18"] },
-
+    "n24": { "floor": 1, "x": 65, "y": 64, "neighbors": ["n20"] },
+    "n25": { "floor": 1, "x": 58, "y": 63, "isElevator": true, "neighbors": ["n20", "n18"] },
+    
     "_note3": "Second Floor waypoints (floor 3)",
 
     "n200": { "floor": 3, "x": 53, "y": 61, "neighbors": ["n201", "n13"] }, 
@@ -48,7 +49,7 @@
     "n214": { "floor": 3, "x": 23, "y": 35, "neighbors": ["n213", "n215"] }, 
     "n215": { "floor": 3, "x": 15, "y": 34, "neighbors": ["n214"] }, 
     "n235": { "floor": 3, "x": 65, "y": 64, "isElevator": true, "neighbors": ["n216", "n18", "n54"] },
-    "n216": { "floor": 3, "x": 70, "y": 64, "isElevator": ["n201", "n218", "n219", "n235"] }, 
+    "n216": { "floor": 3, "x": 70, "y": 64, "neighbors": ["n201", "n218", "n219", "n235"] }, 
     "n218": { "floor": 3, "x": 69, "y": 68, "neighbors": ["n216", "n220"] }, 
     "n219": { "floor": 3, "x": 77, "y": 69, "neighbors": ["n216"] }, 
     "n220": { "floor": 3, "x": 62, "y": 70, "neighbors": ["n218", "n222"] }, 
@@ -81,7 +82,7 @@
     "n51": { "floor": 4, "x": 72, "y": 36, "neighbors": ["n50", "n52"] },
     "n52": { "floor": 4, "x": 74, "y": 38, "neighbors": ["n51", "n207"] },
     "n53": { "floor": 4, "x": 57, "y": 60, "neighbors": ["n40", "n41"] },
-    "n54": { "floor": 4, "x": 65, "y": 64, "isElevator": true,  "neighbors": ["n54", "n235"] }
+    "n54": { "floor": 4, "x": 64, "y": 58, "isElevator": true,  "neighbors": ["n53", "n235"] }
 
   },
   "rooms": {
