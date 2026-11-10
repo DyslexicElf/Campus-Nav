@@ -21,9 +21,9 @@
             <div class="building-select-group" style="margin: 10px 0 15px 0; display: flex; align-items: center; gap: 10px;">
                 <label for="building-select" style="font-weight: bold; font-size: 14px;">Building:</label>
                 <select id="building-select" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; flex-grow: 1; background: #fff; cursor: pointer;">
-                    <option value="Campus">Campus </option>
-                    <option value="Paul">Paul Hall</option>
-                    <option value="Robert">Robert Frost</option>
+                    <option value="campus">Campus </option>
+                    <option value="paul">Paul Hall</option>
+                    <option value="robert">Robert Frost</option>
                 </select>
             </div>
 
@@ -77,7 +77,7 @@
     const buildingSelect = document.getElementById('building-select');
     buildingSelect.value = activeBuilding;
 
-    const displayBuildingName = activeBuilding === 'Paul' ? 'Paul Hall' : `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map`;
+    const displayBuildingName = activeBuilding === 'paul' ? 'Paul Hall' : `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map`;
     document.getElementById('building-title').innerText = `${displayBuildingName} - Campus-Nav`;
 
     let currentActivePath = [];
@@ -104,7 +104,7 @@
         const newUrl = `${window.location.pathname}?building=${selectedBuilding}`;
         window.history.pushState({ path: newUrl }, '', newUrl);
         activeBuilding = selectedBuilding;
-        const currentName = activeBuilding === 'Paul' ? 'Paul Hall' : `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map`;
+        const currentName = activeBuilding === 'paul' ? 'Paul Hall' : `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map`;
         document.getElementById('building-title').innerText = `${currentName} - Campus-Nav`;
         loadBuildingData();
     });
@@ -182,7 +182,7 @@
             if (targetIndex === floorNumber.toString()) {
                 buttons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-                mapImage.setAttribute('src', `images/${activeBuilding}/${floorNumber}.png`);
+                mapImage.setAttribute('src', `images/${activeBuilding}/floor${floorNumber}.png`);
                 renderPath(floorNumber);
             }
         });
@@ -425,7 +425,7 @@
         if (newBuilding && newBuilding !== activeBuilding) {
             activeBuilding = newBuilding;
             buildingSelect.value = activeBuilding;
-            const currentName = activeBuilding === 'Paul' ? 'Paul Hall' : `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map`;
+            const currentName = activeBuilding === 'paul' ? 'Paul Hall' : `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map`;
             document.getElementById('building-title').innerText = `${currentName} - Campus-Nav`;
             loadBuildingData();
             return;
