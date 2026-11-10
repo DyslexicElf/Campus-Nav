@@ -29,7 +29,7 @@
     "n23": { "floor": 1, "x": 69, "y": 34, "neighbors": ["n22"] },
     "n24": { "floor": 1, "x": 65, "y": 64, "neighbors": ["n20"] },
     "n25": { "floor": 1, "x": 58, "y": 63, "isElevator": true, "neighbors": ["n20", "n18"] },
-    
+
     "_note3": "Second Floor waypoints (floor 3)",
 
     "n200": { "floor": 3, "x": 53, "y": 61, "neighbors": ["n201", "n13"] }, 
