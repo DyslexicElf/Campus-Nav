@@ -134,7 +134,8 @@
             if (current === endNode) break;
             if (currentDist > distances[current]) continue;
 
-            const neighbors = waypoints[current].neighbors;
+            const neighbors = waypoints[current].neighbors || [];
+            if (!waypoints[current].neighbors) console.warn(`Heads up: Node ${current} is missing a neighbors array in JSON!`);
             
             for (const neighbor of neighbors) {
                 const floor1 = waypoints[current].floor;
@@ -416,6 +417,42 @@
         this.style.opacity = isDebugMode ? '1' : '0.5';
         const activeFloorBtn = document.querySelector('.floor-btn.active');
         if (activeFloorBtn) renderPath(activeFloorBtn.getAttribute('data-floor'));
+    });
+
+    // ==========================================
+    // DEBUG: CLICK MAP TO GET COORDINATES
+    // ==========================================
+    document.querySelector('.map-wrapper').addEventListener('click', function(e) {
+        if (!isDebugMode) return; 
+        
+        const rect = this.getBoundingClientRect();
+        
+        const clickX = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+        const clickY = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+        
+        const activeBtn = document.querySelector('.floor-btn.active');
+        const floor = activeBtn ? activeBtn.getAttribute('data-floor') : 'unknown';
+        
+        const jsonSnippet = `"n_NEW": { "floor": ${floor}, "x": ${clickX}, "y": ${clickY}, "neighbors": [] },`;
+        
+        // Log to console for your history
+        console.log(jsonSnippet);
+        
+        // Silently copy to clipboard
+        navigator.clipboard.writeText(jsonSnippet).then(() => {
+            // Flash a quick visual confirmation using your existing error message element
+            const msgElement = document.getElementById('search-error-msg');
+            msgElement.textContent = `Copied to clipboard: Node at x:${clickX}, y:${clickY}`;
+            msgElement.style.color = '#007aff'; // Blue for info instead of red
+            msgElement.style.display = 'block';
+            
+            setTimeout(() => {
+                msgElement.style.display = 'none';
+                msgElement.style.color = '#ff3b30'; // Reset to red for actual errors
+            }, 2000);
+        }).catch(err => {
+            console.error("Clipboard copy failed:", err);
+        });
     });
 
     // ==========================================
