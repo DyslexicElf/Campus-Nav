@@ -77,7 +77,9 @@
     const buildingSelect = document.getElementById('building-select');
     buildingSelect.value = activeBuilding;
 
-    const displayBuildingName = activeBuilding === 'paul' ? 'Paul Hall' : `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map`;
+    let displayBuildingName = "Campus Map";
+    if (activeBuilding === 'paul') displayBuildingName = "Paul Hall";
+    if (activeBuilding === 'robert') displayBuildingName = "Robert Frost"; 
     document.getElementById('building-title').innerText = `${displayBuildingName} - Campus-Nav`;
 
     let currentActivePath = [];
@@ -104,8 +106,10 @@
         const newUrl = `${window.location.pathname}?building=${selectedBuilding}`;
         window.history.pushState({ path: newUrl }, '', newUrl);
         activeBuilding = selectedBuilding;
-        const currentName = activeBuilding === 'paul' ? 'Paul Hall' : `${activeBuilding.charAt(0).toUpperCase() + activeBuilding.slice(1)} Map`;
-        document.getElementById('building-title').innerText = `${currentName} - Campus-Nav`;
+        let displayBuildingName = "Campus Map";
+        if (activeBuilding === 'paul') displayBuildingName = "Paul Hall";
+        if (activeBuilding === 'robert') displayBuildingName = "Robert Frost";
+        document.getElementById('building-title').innerText = `${displayBuildingName} - Campus-Nav`;
         loadBuildingData();
     });
 
